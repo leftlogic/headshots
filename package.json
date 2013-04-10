@@ -1,0 +1,29 @@
+{
+  "name": "headshots",
+  "description": "Throw the ball at your opponent's face!",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">= 0.10.x"
+  },
+  "dependencies": {
+    "express": "~3.1.1",
+    "webrtc.io": "0.0.4",
+    "webrtc.io-client": "0.0.2-3",
+    "ws": "~0.4.25"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/leftlogic/headshots.git"
+  },
+  "author": "Remy Sharp",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://rem.mit-license.org"
+    }
+  ]
+}
