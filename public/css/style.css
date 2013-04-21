@@ -30,12 +30,13 @@ html {
 }
 
 #welcome {
-  background: #2c3e50 url(../images/logo.png) no-repeat center 4rem;
+  background: #34495e url(../images/logo.png) no-repeat center top;
+  background-size: 345px;
 }
 
 #welcome h1 {
   margin: 0;
-  background: #34495e url(../images/logo.png) no-repeat center 30px;
+  background-size: 345px;
   min-height: 380px;
   text-indent: -9000px;
 }
