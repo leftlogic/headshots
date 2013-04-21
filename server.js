@@ -1,12 +1,8 @@
 "use strict";
 var express = require('express'),
     app = express(),
-    path = require('path'),
-    routes = require('./lib/routes')(app),
     server = require('http').createServer(app),
     port = process.env.PORT || 8080;
-
-app.use(express.static(__dirname + '/public'));
 
 app.configure(function(){
   app.set('port', port);
@@ -19,11 +15,23 @@ app.configure(function(){
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
-  app.use(express.cookieParser());
-  app.use(express.session({ secret: 'spa6kugo3chi4rti8wajy1no5ku' }));
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
+  app.use(express.session());
+
   app.use(app.router);
+
+  // xhr flag middleware
+  app.use(function xhr(req, res, next) {
+    req.xhr = req.headers['x-requested-with'] === 'XMLHttpRequest';
+    next();
+  });
+
+  // include our router before the static router
+  require('./lib/routes')(app);
+  app.use(express.static(__dirname + '/public'));
 });
+
+
 
 app.configure('production', function () {
   app.set('isproduction', true);
