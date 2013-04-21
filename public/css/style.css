@@ -1,12 +1,28 @@
 html, body {
   height: 100%;
-  font-family: 'Roboto', times;
-  font-weight: 400;
-  font-size: 16px;
   padding: 0;
   max-width: 400px;
   margin: 0 auto;
-  background: #000;
+  background: #2c3e50;
+  color: #ECF0F1;
+}
+
+html, body, input {
+  font-family: 'Roboto', times;
+  font-weight: 300;
+  font-size: 16px;
+}
+
+body {
+  box-sizing: border-box;
+}
+
+body > :first-child {
+  padding-top: 2rem;
+}
+
+input {
+  -webkit-appearance: none;
 }
 
 html {
@@ -14,7 +30,7 @@ html {
 }
 
 #welcome {
-  background: #2c3e50 url(../images/logo.png) no-repeat center 30px;
+  background: #2c3e50 url(../images/logo.png) no-repeat center 4rem;
 }
 
 #welcome h1 {
@@ -66,4 +82,105 @@ footer a {
 
 footer a:last-child {
   float: right; 
+}
+
+.pin .info {
+  background: #E74C3C;
+  width: 9rem;
+  margin: 0 auto;
+  border-radius: 9rem;
+  padding: 1rem;
+  text-align: center;
+  height: 9rem;
+  position: relative;
+  z-index: 1;
+  border: 0;
+  font-size: 4rem;
+  text-transform: uppercase;
+  display: block;
+  box-sizing: content-box;
+}
+
+.pin small {
+    text-transform: uppercase;
+    margin: 1.5rem 0 1rem;
+    display: block;
+    font-size: 1rem;
+}
+
+.pin p {
+    text-align: center;
+    font-size: 4rem;
+    font-weight: 100;
+    margin: 0;
+    line-height: 3rem;
+}
+
+h2 {
+    font-weight: 100;
+    text-align: center;
+    margin: 0 2rem 2rem;
+}
+
+.pin {
+    position: relative;
+}
+
+.pin .streak {
+  background: #ebeff0;
+  width: 60rem;
+  height: 11rem;
+  position: absolute;
+  right: 50%;
+  top: 0;
+  overflow: hidden;
+  z-index: 0;
+  text-transform: uppercase;
+  display: block;
+  -webkit-transform: rotate(-65deg);
+  -webkit-transform-origin: 100%;
+  -moz-transform: rotate(-65deg);
+  -moz-transform-origin: 100%;
+  transform: rotate(-65deg);
+  transform-origin: 100%;
+
+  background: #ebeff0; /* Old browsers */
+  background: -moz-linear-gradient(left,  rgba(0,0,0,0) 0%, #ebeff0 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,#ebeff0)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left,  rgba(0,0,0,0) 0%,#ebeff0 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left,  rgba(0,0,0,0) 0%,#ebeff0 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(left,  rgba(0,0,0,0) 0%,#ebeff0 100%); /* IE10+ */
+  background: linear-gradient(to right,  rgba(0,0,0,0) 0%,#ebeff0 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(0,0,0,0)', endColorstr='#ebeff0',GradientType=1 ); /* IE6-9 */
+
+}
+
+#join .info {
+    color: #2c3e50;
+    font-weight: 300;
+    background: #27AE60;
+    font-weight: 200;
+}
+
+.field {
+  display: block;
+  background: #BDC3C7;
+  border: 0;
+  font-size: 3.5rem;
+  text-align: center;
+  margin: 0 auto 2rem auto;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  width: 80%;
+  position: relative;
+  border-radius: 0;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+#join .info:active {
+  background: rgb(38, 136, 79);
 }
