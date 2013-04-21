@@ -20,12 +20,6 @@ app.configure(function(){
 
   app.use(app.router);
 
-  // xhr flag middleware
-  app.use(function xhr(req, res, next) {
-    req.xhr = req.headers['x-requested-with'] === 'XMLHttpRequest';
-    next();
-  });
-
   // include our router before the static router
   require('./lib/routes')(app);
   app.use(express.static(__dirname + '/public'));

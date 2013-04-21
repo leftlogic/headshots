@@ -1,3 +1,11 @@
+.scene {
+  -webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
+  -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
+/* make transparent link selection, adjust last value opacity 0 to 1.0 */
+  -webkit-tap-highlight-color: rgba(0,0,0,1.0); 
+  -webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
+}
+
 html, body {
   height: 100%;
   padding: 0;
@@ -17,7 +25,7 @@ body {
   box-sizing: border-box;
 }
 
-body > :first-child {
+body h2 {
   padding-top: 2rem;
 }
 
@@ -31,12 +39,12 @@ html {
 
 #welcome {
   background: #34495e url(../images/logo.png) no-repeat center top;
-  background-size: 345px;
+  background-size: 100%;
 }
 
 #welcome h1 {
   margin: 0;
-  background-size: 345px;
+  background-size: 80%;
   min-height: 380px;
   text-indent: -9000px;
 }
@@ -195,4 +203,75 @@ input[type=number]::-webkit-outer-spin-button {
 
 #join .info:active {
   background: rgb(38, 136, 79);
+}
+
+input[type=submit] {
+  cursor: pointer;
+}
+
+.scene {
+  background: #2C3E50;
+  height: 100%;
+}
+
+.bgmountains {
+  background: url(../images/second-mountain.png) no-repeat center bottom;
+  height: 50%;
+  background-size: 100%;
+}
+
+.fgmountains {
+  background: url(../images/first-mountain.png) no-repeat center bottom;
+  height: 100%;
+  background-size: 100%;
+}
+
+.floor {
+  background: #16A085  url(../images/floor-grid.png) no-repeat center top;
+  height: 50%;
+  background-size: 200%;
+  position: relative;
+}
+
+.player {
+  background: url(../images/player-a-center.png) no-repeat center;
+  position: absolute;
+  width: 170px;
+  height: 225px;
+  background-size: 100%;
+  top: -10rem;
+  right: 23%;
+}
+
+.face {
+  background: url(../images/remy.png) no-repeat center;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 32px;
+  left: 61px;
+  background-size: 200%;
+  background-repeat: no-repeat;
+}
+
+.ball {
+    position: absolute;
+    bottom: 0;
+    right: 30%;
+    width: 126px;
+    height: 100%;
+    background: url(../images/ball.png) no-repeat center bottom;
+    background-size: 100%;
+    background-position-y: 109%;
+}
+
+.arrow {
+    position: absolute;
+    background: url(../images/3d-arrow.png) no-repeat;
+    width: 33%;
+    height: 100px;
+    bottom: 0;
+    background-size: 100%;
+    left: 33%;
+    bottom: 10%;
 }
