@@ -11,7 +11,8 @@
     "webrtc.io-client": "0.0.2-3",
     "hbs": "1.0.5",
     "ws": "~0.4.25",
-    "machina": "~0.3.4"
+    "machina": "~0.3.4",
+    "underscore": "~1.4.4"
   },
   "main": "server.js",
   "scripts": {
