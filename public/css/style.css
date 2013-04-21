@@ -212,6 +212,7 @@ input[type=submit] {
 .scene {
   background: #2C3E50;
   height: 100%;
+  position: relative;
 }
 
 .bgmountains {
