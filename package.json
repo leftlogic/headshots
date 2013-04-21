@@ -9,6 +9,7 @@
     "express": "~3.1.1",
     "webrtc.io": "0.0.4",
     "webrtc.io-client": "0.0.2-3",
+    "hbs": "1.0.5",
     "ws": "~0.4.25"
   },
   "main": "server.js",
