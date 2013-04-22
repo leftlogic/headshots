@@ -216,21 +216,15 @@ input[type=submit] {
 }
 
 .bgmountains {
-  background: url(../images/second-mountain.png) no-repeat center bottom;
+  background: url(../images/mountains.png) no-repeat center bottom;
   height: 50%;
-  background-size: 100%;
-}
-
-.fgmountains {
-  background: url(../images/first-mountain.png) no-repeat center bottom;
-  height: 100%;
   background-size: 100%;
 }
 
 .floor {
   background: #16A085  url(../images/floor-grid.png) no-repeat center top;
   height: 50%;
-  background-size: 200%;
+  background-size: 100%;
   position: relative;
 }
 
