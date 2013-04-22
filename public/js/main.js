@@ -122,7 +122,6 @@ function init() {
       'video': {'mandatory': {}, 'optional': []},
       'audio': false
     }, function(stream) {
-      alert('got data');
       // var video = document.createElement('video');
       // video.id = 'you';
       // document.body.appendChild(video);
