@@ -1,4 +1,4 @@
-/*global rtc:true, alert:true*/
+/*global rtc:true, alert:true, pin:true*/
 "use strict";
 
 var $ = document.querySelectorAll.bind(document);
@@ -11,9 +11,9 @@ var $ = document.querySelectorAll.bind(document);
 var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
 
-var room = '1234',
-    video = null;
+var video = null;
 
+/*
 function throttle(fn, threshhold, scope) {
   threshhold || (threshhold = 250);
   var last,
@@ -36,6 +36,7 @@ function throttle(fn, threshhold, scope) {
     }
   };
 }
+*/
 
 function removeVideo(socketId) {
   var video = document.getElementById('remote' + socketId);
@@ -75,21 +76,21 @@ function initSocket() {
   var socket;
 
   if(rtc.dataChannelSupport) {
-    console.log('initializing data channel chat');
+    console.log('initializing data channel');
     socket = dataChannel;
   } else {
-    console.log('initializing websocket chat');
+    console.log('initializing websocket :(');
     socket = websocket;
   }
 
   window.addEventListener('deviceorientation', function (event) {
-    var g = map(event.gamma, -90, 90, -20, 20) | 0;
+    var g = map(event.gamma, -90, 90, -1, 1) | 0;
     // var g = event.gamma | 0;
     socket.send(JSON.stringify({
-      "eventName": "orientation_msg",
-      "data": {
-        "gamma": g,
-        "room": room
+      eventName: 'orientation_msg',
+      data: {
+        gamma: g,
+        pin: pin
       }
     }));
   }, false);
@@ -105,21 +106,24 @@ function initSocket() {
 function init() {
   if (PeerConnection) {
     rtc.createStream({
-      "video": {"mandatory": {}, "optional": []},
-      "audio": true
+      'video': {'mandatory': {}, 'optional': []},
+      'audio': false
     }, function(stream) {
+      // var video = document.createElement('video');
+      // video.id = 'you';
+      // document.body.appendChild(video);
       // document.getElementById('you').src = URL.createObjectURL(stream);
       // document.getElementById('you').play();
       // videos.push(document.getElementById('you'));
-      // //rtc.attachStream(stream, 'you');
+      // rtc.attachStream(stream, 'you');
       // subdivideVideos();
     });
   } else {
     alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
   }
 
-  // get('/room', function (room) {
-    rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], room);
+  // get('/pin', function (pin) {
+    rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
 
     rtc.on('add remote stream', function(stream, socketId) {
       console.log("ADDING REMOTE STREAM...");
@@ -128,8 +132,17 @@ function init() {
       video.src = window.URL.createObjectURL(stream);
       video.autoplay = true;
       video.id = 'remote' + socketId;
-      document.getElementById('videos').appendChild(video);
-      rtc.attachStream(stream, video.id);
+      video.play();
+
+      if (video.readyState === 4) {
+        renderVideo(video);
+      } else {
+        video.addEventListener('canplay', function () {
+          renderVideo(video);
+        });
+      }
+
+      rtc.attachStream(stream, video);
     });
     rtc.on('disconnect stream', function(data) {
       console.log('remove ' + data);
@@ -139,5 +152,39 @@ function init() {
     initSocket();
   // });
 }
+
+function renderVideo(video) {
+  // document.body.appendChild(video);
+
+  video.play();
+
+  var ctx = document.createElement('canvas').getContext('2d');
+  var w = video.videoWidth;
+  var h = video.videoHeight;
+
+  var narrow = w > h ? h : w,
+      x = (w - narrow) / 2,
+      y = (h - narrow) / 2,
+      target = 40;
+
+  ctx.canvas.height = ctx.canvas.width = target;
+
+  var face = document.querySelector('.face');
+  face.appendChild(ctx.canvas);
+
+  setInterval(function () {
+    ctx.drawImage(video, x, y, narrow, narrow, 0, 0, target, target);
+    // face.style.backgroundImage = 'url(' + ctx.canvas.toDataURL('image/png') + ')';
+  }, 1000 / 12);
+
+  // var updateVideo = function () {
+  //   window.requestAnimationFrame(updateVideo);
+  // };
+
+  // window.requestAnimationFrame(updateVideo);
+}
+
+window.onload = init;
+
 
 })();

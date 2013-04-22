@@ -352,7 +352,8 @@ if (navigator.webkitGetUserMedia) {
         if (rtc.initializedStreams === rtc.numStreams) {
           rtc.fire('ready');
         }
-      }, function() {
+      }, function(err) {
+        console.log(err, err.toString());
         alert("Could not connect stream.");
         onFail();
       });
@@ -371,7 +372,12 @@ if (navigator.webkitGetUserMedia) {
   };
 
   rtc.attachStream = function(stream, domId) {
-    var element = document.getElementById(domId);
+    var element;
+    if (typeof domId === 'string') {
+      element = document.getElementById(domId);
+    } else {
+      element = domId;
+    }
     if (navigator.mozGetUserMedia) {
       console.log("Attaching media stream");
       element.mozSrcObject = stream;
@@ -440,8 +446,7 @@ if (navigator.webkitGetUserMedia) {
     };
 
     channel.onmessage = function(message) {
-      console.log('data stream message ' + id);
-      console.log(message);
+      // console.log('data stream message ' + id);
       rtc.fire('data stream data', channel, message.data);
     };
 

@@ -264,7 +264,8 @@ input[type=submit] {
 }
 
 .face {
-  background: url(../images/remy.png) no-repeat center;
+  background-repeat: no-repeat;
+  background-position: center;
   width: 40px;
   height: 40px;
   position: absolute;
@@ -273,6 +274,7 @@ input[type=submit] {
   background-size: 200%;
   background-repeat: no-repeat;
   display: block;
+  overflow: hidden;
 }
 
 .ball {
@@ -299,4 +301,8 @@ input[type=submit] {
 
 .player {
     display: block;
+}
+
+video {
+  /*display: none;*/
 }
