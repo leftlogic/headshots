@@ -3,7 +3,9 @@ function status() {
     if (err) {
       setTimeout(status, 5000);
     }
-    console.log('we got in', result);
+    if (result) {
+      window.location = '/play';
+    }
   });
 }
 

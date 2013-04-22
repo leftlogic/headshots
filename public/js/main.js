@@ -1,3 +1,13 @@
+/*global rtc:true, alert:true*/
+"use strict";
+
+var $ = document.querySelectorAll.bind(document);
+
+// fitText($('#welcome p'), 1.2);
+// fitText($('h1'), 1.2);
+
+(function () {
+
 var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
 
@@ -10,8 +20,8 @@ function throttle(fn, threshhold, scope) {
       deferTimer;
   return function () {
     var context = scope || this;
-  
-    var now = +new Date,
+
+    var now = +new Date(),
         args = arguments;
     if (last && now < last + threshhold) {
       // hold on to it
@@ -38,37 +48,6 @@ function map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-function openxhr(type, url, data, callback, custom) {
-  var xhr = new XMLHttpRequest();
-
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      if (xhr.status == 200 || xhr.status == 0) {
-        callback(JSON.parse(xhr.responseText));
-      } else {
-        callback(xhr.status);
-      }
-    }
-  };
-
-  xhr.open(type, url);
-
-  if (custom) custom(xhr);
-
-  xhr['X-Requested-With'] = 'XMLHttpRequest';
-  xhr.send(data);
-}
-
-function get(url, callback) {
-  openxhr('GET', url, null, callback);
-}
-
-function post(url, data, callback) {
-  openxhr('POST', url, 'data=' + encodeURIComponent(JSON.stringify(data)), callback, function (xhr) {
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-  });
-}
-
 var websocket = {
   send: function(message) {
     rtc._socket.send(message);
@@ -81,7 +60,7 @@ var websocket = {
 
 var dataChannel = {
   send: function(message) {
-    for(var connection in rtc.dataChannels) {
+    for (var connection in rtc.dataChannels) {
       var channel = rtc.dataChannels[connection];
       channel.send(message);
     }
@@ -123,10 +102,6 @@ function initSocket() {
   });
 }
 
-function map(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
 function init() {
   if (PeerConnection) {
     rtc.createStream({
@@ -150,7 +125,7 @@ function init() {
       console.log("ADDING REMOTE STREAM...");
       // var clone = cloneVideo('you', socketId);
       video = document.createElement('video');
-      video.src = URL.createObjectURL(stream);
+      video.src = window.URL.createObjectURL(stream);
       video.autoplay = true;
       video.id = 'remote' + socketId;
       document.getElementById('videos').appendChild(video);
@@ -164,3 +139,5 @@ function init() {
     initSocket();
   // });
 }
+
+})();

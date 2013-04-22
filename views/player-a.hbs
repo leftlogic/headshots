@@ -1,4 +1,4 @@
-<div id="player-a" class="scene">
+<div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
   <div class="bgmountains">
   </div>
   <div class="floor">
@@ -10,3 +10,6 @@
     <div class="arrow"></div>
   </div>
 </div>
+<script>var pin = {{pin}};</script>
+<script src="js/webrtc.io.js"></script>
+<script src="js/main.js"></script>

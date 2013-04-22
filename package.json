@@ -12,7 +12,8 @@
     "hbs": "1.0.5",
     "ws": "~0.4.25",
     "machina": "~0.3.4",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "node-uuid": "~1.4.0"
   },
   "main": "server.js",
   "scripts": {

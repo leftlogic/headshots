@@ -224,18 +224,43 @@ input[type=submit] {
 .floor {
   background: #16A085  url(../images/floor-grid.png) no-repeat center top;
   height: 50%;
-  background-size: 100%;
   position: relative;
 }
 
 .player {
-  background: url(../images/player-a-center.png) no-repeat center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
   position: absolute;
   width: 170px;
   height: 225px;
-  background-size: 100%;
   top: -10rem;
-  right: 23%;
+  right: 30%;
+}
+
+.player-a .player {
+  background-image: url(../images/player-a-throw1.png);
+}
+
+.player-b .player {
+  background-image: url(../images/player-b-throw1.png);
+}
+
+.player-a.player-a-turn .player {
+  background-image: url(../images/player-a-center.png);
+}
+
+.player-b.player-b-turn .player {
+  background-image: url(../images/player-b-center.png);
+}
+
+.ball {
+  display: none;
+}
+
+.player-b.player-b-turn .ball,
+.player-a.player-a-turn .ball {
+  display: block;
 }
 
 .face {
@@ -247,12 +272,13 @@ input[type=submit] {
   left: 61px;
   background-size: 200%;
   background-repeat: no-repeat;
+  display: block;
 }
 
 .ball {
     position: absolute;
     bottom: 0;
-    right: 30%;
+    right: 35%;
     width: 126px;
     height: 100%;
     background: url(../images/ball.png) no-repeat center bottom;
@@ -269,4 +295,8 @@ input[type=submit] {
     background-size: 100%;
     left: 33%;
     bottom: 10%;
+}
+
+.player {
+    display: block;
 }
