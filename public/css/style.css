@@ -254,6 +254,42 @@ input[type=submit] {
   background-image: url(../images/player-b-center.png);
 }
 
+.player-b.player-b-turn .player.center {
+  background-image: url(../images/player-b-center.png);
+}
+
+.player-b.player-b-turn .player.left {
+  background-image: url(../images/player-b-left.png);
+}
+
+.player-b.player-b-turn .player.right {
+  background-image: url(../images/player-b-right.png);
+}
+
+.player-a.player-a-turn .player.center {
+  background-image: url(../images/player-a-center.png);
+}
+
+.player-a.player-a-turn .player.left {
+  background-image: url(../images/player-a-left.png);
+}
+
+.player-a.player-a-turn .player.right {
+  background-image: url(../images/player-a-right.png);
+}
+
+.player.left .face {
+  -webkit-transform: rotate(-25deg) translateX(-35px) translateY(7px);
+  -moz-transform: rotate(-25deg) translateX(-35px) translateY(7px);
+  transform: rotate(-25deg) translateX(-35px) translateY(7px);
+}
+
+.player.right .face {
+  -webkit-transform: rotate(25deg) translateX(47px) translateY(4px);
+  -moz-transform: rotate(25deg) translateX(47px) translateY(4px);
+  transform: rotate(25deg) translateX(47px) translateY(4px);
+}
+
 .ball {
   display: none;
 }

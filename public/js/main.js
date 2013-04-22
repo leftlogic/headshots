@@ -84,22 +84,35 @@ function initSocket() {
   }
 
   window.addEventListener('deviceorientation', function (event) {
-    var g = map(event.gamma, -90, 90, -1, 1) | 0;
+    var g = map(event.gamma, -50, 50, -1, 1) | 0;
     // var g = event.gamma | 0;
     socket.send(JSON.stringify({
       eventName: 'orientation_msg',
       data: {
+        // type: 'orientation',
         gamma: g,
+        raw: event.gamma,
         pin: pin
       }
     }));
   }, false);
 
+  var player = document.querySelector('.player'),
+      positionStates = {
+        '-1': 'left',
+        '0': 'center',
+        '1': 'right'
+      };
+
   rtc.on(socket.event, function() {
     var data = socket.recv.apply(this, arguments);
-    if (video) {
-      document.body.style.webkitTransform = 'rotate(' + data.gamma + 'deg)';
-    }
+    // if (data.type === 'orientation') {
+      player.className = 'player ' + positionStates[data.gamma];
+    // }
+
+    // if (video) {
+    //   document.body.style.webkitTransform = 'rotate(' + data.gamma + 'deg)';
+    // }
   });
 }
 
@@ -144,9 +157,18 @@ function init() {
 
       rtc.attachStream(stream, video);
     });
-    rtc.on('disconnect stream', function(data) {
-      console.log('remove ' + data);
-      removeVideo(data);
+    rtc.on('disconnect stream', function(socketId) {
+      console.log('remove ' + socketId);
+
+      // 1. remove old canvas
+      // 2. cancel timer (based on id on video)
+      // 3. remove video element
+
+      var video = document.getElementById('remote' + socketId);
+      var canvas = document.querySelector('.face canvas');
+      canvas.parentNode.removeChild(canvas);
+      clearInterval(video.dataset.timer);
+      video.parentNode.removeChild(video);
     });
 
     initSocket();
@@ -154,7 +176,7 @@ function init() {
 }
 
 function renderVideo(video) {
-  // document.body.appendChild(video);
+  document.body.appendChild(video);
 
   video.play();
 
