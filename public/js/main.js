@@ -1,7 +1,7 @@
 /*global rtc:true, alert:true, pin:true*/
 "use strict";
 
-var $ = document.querySelectorAll.bind(document);
+var $ = document.querySelector.bind(document);
 
 // fitText($('#welcome p'), 1.2);
 // fitText($('h1'), 1.2);
@@ -97,7 +97,7 @@ function initSocket() {
     }));
   }, false);
 
-  var player = document.querySelector('.player'),
+  var player = $('.player'),
       positionStates = {
         '-1': 'left',
         '0': 'center',
@@ -122,6 +122,7 @@ function init() {
       'video': {'mandatory': {}, 'optional': []},
       'audio': false
     }, function(stream) {
+      alert('got data');
       // var video = document.createElement('video');
       // video.id = 'you';
       // document.body.appendChild(video);
@@ -165,7 +166,7 @@ function init() {
       // 3. remove video element
 
       var video = document.getElementById('remote' + socketId);
-      var canvas = document.querySelector('.face canvas');
+      var canvas = $('.face canvas');
       canvas.parentNode.removeChild(canvas);
       clearInterval(video.dataset.timer);
       video.parentNode.removeChild(video);
@@ -191,7 +192,7 @@ function renderVideo(video) {
 
   ctx.canvas.height = ctx.canvas.width = target;
 
-  var face = document.querySelector('.face');
+  var face = $('.face');
   face.appendChild(ctx.canvas);
 
   setInterval(function () {
@@ -206,7 +207,33 @@ function renderVideo(video) {
   // window.requestAnimationFrame(updateVideo);
 }
 
-window.onload = init;
+function bind(el, handler) {
+  el.addEventListener('touchstart', handler, false);
+  el.addEventListener('click', handler, false);
+}
 
+function pause(event) {
+  event.preventDefault();
+  document.body.className = 'pause';
+}
+
+function resume(event) {
+  event.preventDefault();
+  document.body.className = '';
+}
+
+function exit(event) {
+  event.preventDefault();
+  document.body.className = '';
+  // send xhr event
+  window.location = '/';
+}
+
+bind($('#pause'), pause);
+bind($('#resume'), resume);
+bind($('#exit'), exit);
+
+
+window.onload = init;
 
 })();

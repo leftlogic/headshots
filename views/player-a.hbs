@@ -1,4 +1,13 @@
+<div id="game-control">
+  <h2>Are you sure you want to exit the&nbsp;game?</h2>
+  <div class="buttons">
+    <button id="resume" class="button resume">Resume</button>
+    <button id="exit" class="button exit">Exit</button>
+  </div>
+
+</div>
 <div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
+  <a id="pause" href="#pause">l l</a>
   <div class="bgmountains">
   </div>
   <div class="floor">
@@ -9,6 +18,7 @@
   <div class="ball">
     <div class="arrow"></div>
   </div>
+  <span id="pin">#{{pin}}</span>
 </div>
 <script>var pin = {{pin}};</script>
 <script src="js/webrtc.io.js"></script>

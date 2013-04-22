@@ -1,12 +1,31 @@
 <html>
-  <head>
-    <title>Head Shots</title>
-    <link type="text/css" href="/css/style.css" rel="stylesheet"></link>
-    <script src="/js/webrtc.io.js"></script>
-  </head>
-  <body onload="init()">
-    <div id="videos">
-    </div>    
-    <script src="/js/main.js"></script>
-  </body>
+<head>
+  <meta charset="utf8">
+  <title>Head Shots</title>
+  <meta name="viewport" content="width=device-width">
+  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <link type="text/css" href="/css/style.css" rel="stylesheet"></link>
+  <script src="/js/webrtc.io.js"></script>
+</head>
+<body>
+  <div id="welcome" class="flex-container">
+    <div class="flex-item">
+      <h1>Head Shots!</h1>
+      <p>Find an opponent, and we'll facilitate you need to throw a ball at their head.</p>
+    </div>
+    <div class="flex-item">
+      <input type="number" pattern="[0-9]*">
+      <button class="button" id="start">Start</button>
+    </div>
+    <div class="flex-item">
+      <span id="code">----</span>
+      <button class="button" id="join">Join</button>
+    </div>
+  </div>
+  <div id="videos">
+  </div>    
+  <script src="/js/fittext-simple.js"></script>
+  <script src="/js/main.js"></script>
+  <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+</body>
 </html>
