@@ -12,7 +12,7 @@ app.configure(function(){
   // load hbs helpers
   require ('./views/helpers.js');
 
-  app.use(express.favicon());
+  app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
