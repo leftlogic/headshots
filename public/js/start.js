@@ -1,5 +1,6 @@
+/*global: get:true, pin:true*/
 function status() {
-  get('status/' + pin, function (err, result) {
+  get('/status/' + pin, function (err, result) {
     if (err) {
       setTimeout(status, 5000);
     }

@@ -1,0 +1,15 @@
+Source:
+
+  https://github.com/leftlogic/headshots
+
+Project concept & code:
+
+  Remy Sharp
+  @rem
+  http://leftlogic.com
+
+Design:
+
+  Sebastian Hermida
+  @iamhappyprog
+  http://www.happyprog.com/

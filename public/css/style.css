@@ -69,6 +69,7 @@ html {
   font-weight: 300;
   text-align: center;
   border: 0;
+  cursor: pointer;
 }
 
 .button.join {
@@ -325,13 +326,12 @@ input[type=submit] {
 
 .ball {
     position: absolute;
-    bottom: 0;
+    bottom: -40px;
     right: 35%;
     width: 126px;
     height: 100%;
     background: url(../images/ball.png) no-repeat center bottom;
     background-size: 100%;
-    background-position-y: 109%;
 }
 
 .arrow {
@@ -342,7 +342,7 @@ input[type=submit] {
     bottom: 0;
     background-size: 100%;
     left: 33%;
-    bottom: 10%;
+    bottom: 100px;
 }
 
 .player {
@@ -389,6 +389,6 @@ video {
 #pin {
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 0;
   padding: 5px;
 }
