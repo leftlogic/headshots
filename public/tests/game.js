@@ -1,42 +1,55 @@
 /*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true*/
 "use strict";
-var container;
-var camera, scene, renderer;
-var floor, ball;
-var material;
+
+var interactive = {
+  camera: null,
+  scene: null,
+  renderer: null
+};
+
+var background = {
+  camera: null,
+  scene: null,
+  renderer: null
+};
+
+var actor = {
+  ball: null,
+  floor: null,
+  player: null
+};
+
 var TO_RADIANS = Math.PI/180;
-
-var track;
-
-var player;
 
 var width = window.innerWidth,
     height = window.innerHeight;
 
-var assets = 2;
-
-function ready() {
-  renderer.render(scene, camera);
+function redrawAll() {
+  background.renderer.render(background.scene, background.camera);
+  interactive.renderer.render(interactive.scene, interactive.camera);
 }
 
-function resetBall(x, y, speed) {
-  console.log(x, y, (speed * y) /10);
+function resetBall(posX, x, y, speed) {
+  var ball = actor.ball;
   ball.position.z = 700;
   ball.position.y = -180;
-
-  ball.position.x = 0;
+  ball.position.x = posX / 2 - window.innerWidth / 4;
+  
   ball.velocity.set(0, -20, -20 - (speed * y / 200));
   ball.velocity.rotateY(x);
   ball.velocity.rotateZ(0);
   ball.velocity.rotateX(y);
-  renderer.render(scene, camera);
+  interactive.renderer.render(interactive.scene, interactive.camera);
 }
 
-function getContainer(klass) {
+function getContainer(c) {
   var container = document.createElement('div');
   container.className = 'three';
-  if (klass) { container.className += ' ' + klass; }
-  $('.scene').appendChild(container);
+  if (c) {
+    container.className += ' ' + c;
+  }
+
+  $('.game').appendChild(container);
 
   return container;
 }
@@ -51,18 +64,8 @@ function getFloor(scene) {
   floor.position.y = -250;
   floor.position.z = 100;
 
-/*  var material2 = new THREE.MeshBasicMaterial({ color: 0x169b80 });
-
-  var geom2 = new THREE.PlaneGeometry(1000, 2300, 20, 10);
-  var floorbg = new THREE.Mesh(geom2, material2);
-
-  floorbg.rotation.x = -92 * TO_RADIANS;
-  floorbg.position.y = -250;
-  floorbg.position.z = 100;
-*/
   if (scene) {
     scene.add(floor);
- //   scene.add(floorbg);
   }
 
   return floor;
@@ -76,54 +79,17 @@ function getCamera() {
   return camera;
 }
 
-function buildStaticObjects() {
-  var container = getContainer('backdrop');
-
-  var camera = getCamera();
-
-  var scene = new THREE.Scene();
-  scene.add(camera);
-  
-  var ready = function () {
-    var renderer = new THREE.CanvasRenderer();
-    renderer.setSize(width, height);
-  
-    container.appendChild(renderer.domElement);
-    renderer.render(scene, camera);
-    
-      renderer.render(scene, camera);
-  };
-
-  var floor = getFloor(scene);
-  player = getPlayer(scene, floor);
-  ready();
-
-}
-
-function getPlayer(scene, floor) {
-
-  // TODO add billboard
-/*  var material = new THREE.MeshBasicMaterial({
-    map: new THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', undefined, ready)
-  });
-*/
-
-  var material = new THREE.ParticleBasicMaterial( { 
-    map: THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', null, ready)
+function getPlayer(scene) {
+  var material = new THREE.ParticleBasicMaterial({
+    map: THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', null, redrawAll)
   });
 
   var height = 430,
       width = 140,
       scale = 0.675;
 
- // var geom = new THREE.PlaneGeometry(width, height, 0, 0);
-
-  var player = new THREE.Particle( material );
-//  var player = new THREE.Mesh(geom, material);
-
-  var y = ((height / 2) * scale) + floor.position.y;
-
-  player.position.y = y;
+  var player = interactive.player = new THREE.Particle(material);
+  player.position.y = ((height / 2) * scale) + actor.floor.position.y;
   player.position.z = -220;
   player.position.x = -10;
   player.scale.x = player.scale.y = scale;
@@ -133,17 +99,35 @@ function getPlayer(scene, floor) {
   return player;
 }
 
-function createScene() {
-  scene = new THREE.Scene();
+function buildStaticObjects() {
+  var container = getContainer('backdrop');
+  var camera = background.camera = getCamera();
 
-  container = getContainer();
-
-  camera = getCamera();
+  var scene = background.scene = new THREE.Scene();
   scene.add(camera);
 
-  floor = getFloor();
-  renderer = new THREE.CanvasRenderer();
-  renderer.setSize(width, height);
+  var floor = actor.floor = getFloor(scene);
+
+  // note: the floor must be created before getPlayer, as it's referred to
+  background.player = getPlayer(scene);
+
+  var renderer = background.renderer = new THREE.CanvasRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  container.appendChild(renderer.domElement);
+  renderer.render(scene, camera);
+  renderer.render(scene, camera);
+}
+
+function createInteractiveScene() {
+  var container = getContainer();
+  var scene = interactive.scene = new THREE.Scene();
+
+  var camera = interactive.camera = getCamera();
+  scene.add(camera);
+
+  var renderer = interactive.renderer = new THREE.CanvasRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
   container.appendChild(renderer.domElement);
 
@@ -151,37 +135,33 @@ function createScene() {
 }
 
 function isObjectInTarget(rect1, rect2) {
-// console.log(object, target);
-//   if ( (object.x > target.x - object.width) && (object.x < target.x + object.width) &&
-//        (object.y > target.y - object.height) && (object.y < target.y + object.height) ) {
-//     console.log('yes');
-//     return true;
-//   } else {
-//     return false;
-//   }
-console.log(rect1, rect2);
-  if(((rect1.x<rect2.x + rect2.width) && (rect1.x+rect1.width>rect2.x)) &&
-     ((rect1.y<rect2.y + rect2.height) && (rect1.y+rect1.height > rect2.y))) {
+  if ( ((rect1.x<rect2.x + rect2.width) && (rect1.x+rect1.width>rect2.x)) &&
+       ((rect1.y<rect2.y + rect2.height) && (rect1.y+rect1.height > rect2.y)) ) {
     return true;
   } else {
     return false;
   }
 }
 
-
 function loop() {
 //  requestAnimationFrame(loop);
   var ballradius = 38;
 
+  var ball = actor.ball,
+      player = actor.player,
+      b, p;
+
   ball.updatePhysics();
-  if (ball.position.y-ballradius<floor.position.y) {
-    ball.position.y = floor.position.y+ballradius;
+
+  // don't render unless the ball is moving
+  if (ball.position.y - ballradius < actor.floor.position.y) {
+    ball.position.y = actor.floor.position.y+ballradius;
     ball.velocity.y *= -0.7;
   }
 
   if ((ball.position.z - ballradius < player.position.z) && (ball.position.z - ballradius - ball.velocity.z > player.position.z)) {
 
-    var p = {
+    p = {
       width: player.material.map.image.width * player.scale.x,
       height: player.material.map.image.height * player.scale.y,
       x: player.position.x,
@@ -191,28 +171,23 @@ function loop() {
     p.x -= p.width/2;
     p.y -= p.height/2;
 
-    var b = {
+    b = {
       width: ballradius * 2,
       height: ballradius * 2,
       x: ball.position.x - ballradius,
       y: ball.position.y - ballradius
     };
 
-    console.log(ball.position.x);
-    // if ((x > player.position.x) && (x < (player.position.x + 140 * 0.675))) {
+    // if we hit the player, make the ball bounce backwards.
     if (isObjectInTarget(b, p)) {
-      //console.log(ball.position.x, player.position.x, player.position.x + 140 * 0.675, (ball.position.x > player.position.x) && (ball.position.x < (player.position.x + 140 * 0.675)));
-      console.log('in range');
       ball.velocity.z *= -0.7;
     }
   }
 
   // only render whilst the ball is moving
   if (Math.abs(ball.velocity.z) > 0.1) {
-    renderer.render(scene, camera);
+    interactive.renderer.render(interactive.scene, interactive.camera);
   }
-
-//player.rotation.y+= 0.1;
 
   if (window.stats) {
     stats.update();
@@ -223,34 +198,28 @@ function loop() {
 
 function init() {
   buildStaticObjects();
-  scene = createScene();
+  var scene = interactive.scene = createInteractiveScene();
 
-  ball = new Ball(0.25);
+  var ball = actor.ball = new Ball(0.25);
   ball.drag = 0.985;
 
   scene.add(ball);
   resetBall();
 
-  var player = getPlayer(scene, floor);
+  var player = actor.player = getPlayer(interactive.scene);
   scene.add(player);
 
-
-  document.body.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-  });
-
-  track = new Track(document.body);
+  var track = new Track(document.body);
 
   track.up = function (event) {
     var x = track.x - track.momentumX;
     var y = track.y - track.momentumY;
 
-    resetBall(track.momentumX, track.momentumY, track.duration);
+    resetBall(track.downX, track.momentumX, track.momentumY, track.duration);
   };
 
   resetBall();
-  renderer.render(scene, camera);
-
+  redrawAll();
 
   setInterval(loop, 1000 / 30);
 }
@@ -262,3 +231,19 @@ function randomRange(min, max){
 }
 
 window.onload = init;
+
+window.addEventListener('resize', function () {
+  var w = window.innerWidth,
+      h = window.innerHeight;
+  interactive.camera.aspect = w / h;
+  interactive.camera.updateProjectionMatrix();
+  interactive.renderer.setSize(w, h);
+  background.camera.aspect = w / h;
+  background.camera.updateProjectionMatrix();
+  background.renderer.setSize(w, h);
+  redrawAll();
+}, false /*yeah, like I need this, but heck, I'm a stickler for habits*/);
+
+document.body.addEventListener('touchmove', function (e) {
+  e.preventDefault();
+});

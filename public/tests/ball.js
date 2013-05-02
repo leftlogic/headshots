@@ -1,54 +1,24 @@
 /*globals THREE:true*/
+"use strict";
 // Particle3D class
 var Ball = function (scale) {
-
-  var material = new THREE.ParticleCanvasMaterial({
-    color: 0xff0000,
-    program: function ( context ) {
-       // paint a custom shape on this canvas
-      context.beginPath();
-      context.arc( 0, 0, 1, 0, Math.PI*2, true );
-      context.closePath();
-      context.fill();
-    }
-  });
-
-  // var texture = THREE.ImageUtils.loadTexture('/images/ball.png');
-  // // texture.wrapS = THREE.RepeatWrapping;
-  // // texture.wrapT = THREE.RepeatWrapping;
-  // // texture.repeat.set( 4, 4 );
-
-  // var material = new THREE.ParticleBasicMaterial({
-  //   map: new THREE.ImageUtils.loadTexture('/images/ball.png'),
-  //   transparency: true
-  // });
-
-  var material = new THREE.ParticleBasicMaterial( { 
-    map: THREE.ImageUtils.loadTexture('/images/ball.png', null, ready)
-  });
-
-/*  var material = new THREE.SpriteMaterial({
-    map: new THREE.ImageUtils.loadTexture('/images/ball.png'),
-    useScreenCoordinates: true,
-    alignment: THREE.SpriteAlignment.center
-  });
-*/
-  //var sprite = new THREE.Sprite(material);
-//  sprite.scale.set(16, 16, 1.0);
-  // sprite.position.set(50, 50, 0);
-
-
   // var material = new THREE.ParticleCanvasMaterial({
   //   color: 0xff0000,
   //   program: function ( context ) {
-  //     // paint a custom shape on this canvas
-
+  //      // paint a custom shape on this canvas
   //     context.beginPath();
   //     context.arc( 0, 0, 1, 0, Math.PI*2, true );
   //     context.closePath();
   //     context.fill();
   //   }
   // });
+
+  var material = new THREE.ParticleBasicMaterial( {
+    map: THREE.ImageUtils.loadTexture('/images/ball.png', null, function () {
+      // this.size = this.width / 2 *
+      window.redrawAll();
+    }.bind(this))
+  });
 
   THREE.Particle.call( this, material );
 
@@ -58,8 +28,8 @@ var Ball = function (scale) {
   //this.velocity.rotateY(randomRange(0,360)); 
   this.gravity = new THREE.Vector3(0,-1,0);
   this.drag = 1;
-  
-  this.scale.x = this.scale.y = scale || 20;  //methods... 
+
+  this.scale.x = this.scale.y = scale || 20;
   this.size = scale;
 };
 
