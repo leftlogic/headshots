@@ -18,12 +18,16 @@ var Ball = function (scale) {
   // // texture.wrapT = THREE.RepeatWrapping;
   // // texture.repeat.set( 4, 4 );
 
-/*  var material = new THREE.ParticleBasicMaterial({
-    map: new THREE.ImageUtils.loadTexture('/images/ball.png'),
-    transparency: true
+  // var material = new THREE.ParticleBasicMaterial({
+  //   map: new THREE.ImageUtils.loadTexture('/images/ball.png'),
+  //   transparency: true
+  // });
+
+  var material = new THREE.ParticleBasicMaterial( { 
+    map: THREE.ImageUtils.loadTexture('/images/ball.png')
   });
 
-  var material = new THREE.SpriteMaterial({
+/*  var material = new THREE.SpriteMaterial({
     map: new THREE.ImageUtils.loadTexture('/images/ball.png'),
     useScreenCoordinates: true,
     alignment: THREE.SpriteAlignment.center

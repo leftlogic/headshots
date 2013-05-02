@@ -95,6 +95,7 @@ function getPlayer(scene, floor, ready) {
 
   // TODO add billboard
   var material = new THREE.MeshBasicMaterial({
+    overdraw: true,
     map: new THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', undefined, ready)
   });
 
