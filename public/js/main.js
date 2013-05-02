@@ -227,20 +227,20 @@ var scene = $('.scene');
 
 // var 
 
-bind($('.face'), function (event) {
-  event.preventDefault();
-  // next person's turn
-  if (game.turn) {
-    get('/hit', function (success) {
-      if (success) {
-        game.me.score++;
-      }
+// bind($('.face'), function (event) {
+//   event.preventDefault();
+//   // next person's turn
+//   if (game.turn) {
+//     get('/hit', function (success) {
+//       if (success) {
+//         game.me.score++;
+//       }
 
-      game.turn = false;
-      game.currentPlayer = game.them.letter;
-    });
-  }
-});
+//       game.turn = false;
+//       game.currentPlayer = game.them.letter;
+//     });
+//   }
+// });
 
 
 // window.onload = init;
