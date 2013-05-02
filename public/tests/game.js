@@ -81,29 +81,38 @@ function buildStaticObjects() {
     container.appendChild(renderer.domElement);
     renderer.render(scene, camera);
     
-    setInterval(function () {
       renderer.render(scene, camera);
-    }, 1000 / 30);
   };
 
   var floor = getFloor(scene);
+  var player = getPlayer(scene, floor, ready);
+
+}
+
+function getPlayer(scene, floor, ready) {
 
   // TODO add billboard
   var material = new THREE.MeshBasicMaterial({
     map: new THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', undefined, ready)
   });
 
-  var geom = new THREE.PlaneGeometry(140, 430, 0, 0);
+  var height = 430,
+      width = 140,
+      scale = 0.675;
+
+  var geom = new THREE.PlaneGeometry(width, height, 0, 0);
   window.player = new THREE.Mesh(geom, material);
 
-  player.position.y = -105;
+  var y = ((height / 2) * scale) + floor.position.y;
+
+  player.position.y = y;
   player.position.z = -220;
   player.position.x = -10;
   
-  player.scale.x = player.scale.y = .675;
+  player.scale.x = player.scale.y = scale;
 
   scene.add(player);
-
+  return player;
   
 }
 
@@ -125,7 +134,7 @@ function createScene() {
 }
 
 function loop() {
-  requestAnimationFrame(loop);
+//  requestAnimationFrame(loop);
   var ballradius = 40;
 
   ball.updatePhysics();
@@ -134,8 +143,7 @@ function loop() {
     ball.velocity.y *= -0.7;
   }
   
-  if (ball.position.z < player.position.z) {
-    //console.log('behind player');
+  if ((ball.position.z < player.position.z) && (ball.position.z - ball.velocity.z > player.position.z)) { 
     if ((ball.position.x > player.position.x) && (ball.position.x < (player.position.x + 140 * 0.675))) {
       //console.log(ball.position.x, player.position.x, player.position.x + 140 * 0.675, (ball.position.x > player.position.x) && (ball.position.x < (player.position.x + 140 * 0.675)));
       console.log('in range');
@@ -144,9 +152,11 @@ function loop() {
   }
 
   // only render whilst the ball is moving
-  if (ball.velocity.z < -0.1) {
+  if (Math.abs(ball.velocity.z) > 0.1) {
     renderer.render(scene, camera);
   }
+
+//player.rotation.y+= 0.1;
 
   if (window.stats) {
     stats.update();
@@ -179,8 +189,8 @@ function init() {
   };
 
 
-  //setInterval(loop, 1000 / 30);
-  loop();
+  setInterval(loop, 1000 / 30);
+  //loop();
 }
 
 
