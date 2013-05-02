@@ -8,7 +8,9 @@ var TO_RADIANS = Math.PI/180;
 
 var track;
 
-var width = 400,
+var player;
+
+var width = window.innerWidth,
     height = window.innerHeight;
 
 function resetBall(x, y, speed) {
@@ -85,7 +87,7 @@ function buildStaticObjects() {
   };
 
   var floor = getFloor(scene);
-  var player = getPlayer(scene, floor, ready);
+  player = getPlayer(scene, floor, ready);
 
 }
 
@@ -101,7 +103,7 @@ function getPlayer(scene, floor, ready) {
       scale = 0.675;
 
   var geom = new THREE.PlaneGeometry(width, height, 0, 0);
-  window.player = new THREE.Mesh(geom, material);
+  var player = new THREE.Mesh(geom, material);
 
   var y = ((height / 2) * scale) + floor.position.y;
 
@@ -131,18 +133,54 @@ function createScene() {
   return scene;
 }
 
+function isObjectInTarget(rect1, rect2) {
+// console.log(object, target);
+//   if ( (object.x > target.x - object.width) && (object.x < target.x + object.width) &&
+//        (object.y > target.y - object.height) && (object.y < target.y + object.height) ) {
+//     console.log('yes');
+//     return true;
+//   } else {
+//     return false;
+//   }
+console.log(rect1, rect2);
+  if(((rect1.x<rect2.x + rect2.width) && (rect1.x+rect1.width>rect2.x)) &&
+     ((rect1.y<rect2.y + rect2.height) && (rect1.y+rect1.height > rect2.y))) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
 function loop() {
 //  requestAnimationFrame(loop);
-  var ballradius = 40;
+  var ballradius = ball.size;
 
   ball.updatePhysics();
   if (ball.position.y-ballradius<floor.position.y) {
     ball.position.y = floor.position.y+ballradius;
     ball.velocity.y *= -0.7;
   }
-  
-  if ((ball.position.z < player.position.z) && (ball.position.z - ball.velocity.z > player.position.z)) { 
-    if ((ball.position.x > player.position.x) && (ball.position.x < (player.position.x + 140 * 0.675))) {
+
+  if ((ball.position.z < player.position.z) && (ball.position.z - ball.velocity.z > player.position.z)) {
+
+    var p = {
+      width: player.material.map.image.width * player.scale.x,
+      height: player.material.map.image.height * player.scale.y,
+      x: player.position.x,
+      y: player.position.y
+    };
+
+    var b = {
+      width: ball.size,
+      height: ball.size,
+      x: ball.position.x - ball.size,
+      y: ball.position.y - ball.size,
+    };
+
+    console.log(ball.position.x);
+    // if ((x > player.position.x) && (x < (player.position.x + 140 * 0.675))) {
+    if (isObjectInTarget(b, p)) {
       //console.log(ball.position.x, player.position.x, player.position.x + 140 * 0.675, (ball.position.x > player.position.x) && (ball.position.x < (player.position.x + 140 * 0.675)));
       console.log('in range');
       ball.velocity.z *= -0.7;
