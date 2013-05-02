@@ -209,7 +209,7 @@ function init() {
   buildStaticObjects();
   scene = createScene();
 
-  ball = new Ball(25);
+  ball = new Ball(0.25);
   ball.drag = 0.985;
 
   scene.add(ball);

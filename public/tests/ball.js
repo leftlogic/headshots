@@ -51,13 +51,14 @@ var Ball = function (scale) {
   // });
 
   THREE.Particle.call( this, material );
-  
+
   //define properties
   this.velocity = new THREE.Vector3(0,0,0);
   //this.velocity.rotateX(randomRange(-45,45)); 
   //this.velocity.rotateY(randomRange(0,360)); 
   this.gravity = new THREE.Vector3(0,-1,0);
   this.drag = 1;
+  
   this.scale.x = this.scale.y = scale || 20;  //methods... 
   this.size = scale;
 };
