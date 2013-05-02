@@ -29,5 +29,8 @@
       "type": "MIT",
       "url": "http://rem.mit-license.org"
     }
-  ]
+  ],
+  "devDependencies": {
+    "supertest": "~0.6.0"
+  }
 }

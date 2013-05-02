@@ -43,8 +43,9 @@ Built by @leftlogic aka @rem
   </script>
   {{/if}}
   {{#unless settings.isproduction}}
-  <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+  <script type="foo">document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
   {{/unless}}
+  <script>/mobi/i.test(navigator.userAgent) && !location.hash && setTimeout(function () {if (!pageYOffset) window.scrollTo(0, 1); }, 1000);</script>
 </body>
 </html>
 </body>

@@ -7,19 +7,47 @@
 
 </div>
 <div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
-  <a id="pause" href="#pause">l l</a>
   <div class="bgmountains">
   </div>
   <div class="floor">
     <div class="player center">
+      <span id="theirscore">0</span>
       <div class="face"></div>
     </div>
   </div>
   <div class="ball">
     <div class="arrow"></div>
   </div>
-  <span id="pin">#{{pin}}</span>
 </div>
-<script>var pin = {{pin}};</script>
+<div id="overlays">
+  <a id="pause" href="#pause">l l</a>
+  <span id="pin">#{{pin}}</span>
+  <span id="myscore">0</span>
+</div>
+<script>
+var pin = {{pin}};
+</script>
+<script src="/js/bind.js"></script>
 <script src="/js/webrtc.io.js"></script>
+<script src="/js/xhr.js"></script>
 <script src="/js/main.js"></script>
+
+<script src="/tests/Three.js"></script>
+{{#unless settings.production}}
+<script src="/js/stats.min.js"></script>
+<script>
+var stats = new Stats();
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.top = '0px';
+document.body.appendChild(stats.domElement);
+</script>
+{{/unless}}
+<script>
+var game = Bind({{{game}}}, {
+  'me.score': '#myscore',
+  'them.score': '#theirscore'
+});
+</script>
+<script src="/js/track.js"></script>
+<script src="/tests/ball.js"></script>
+<script src="/tests/game.js"></script>
