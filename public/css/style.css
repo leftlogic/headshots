@@ -17,6 +17,10 @@ html, body {
   color: #ECF0F1;
 }
 
+canvas {
+  display: block;
+}
+
 html, body, input {
   font-family: 'Roboto', times;
   font-weight: 300;
