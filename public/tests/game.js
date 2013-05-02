@@ -171,9 +171,12 @@ function loop() {
       y: player.position.y
     };
 
+    p.x -= p.width/2;
+    p.y -= p.height/2;
+
     var b = {
-      width: ball.size,
-      height: ball.size,
+      width: ball.size * 2,
+      height: ball.size * 2,
       x: ball.position.x - ball.size,
       y: ball.position.y - ball.size,
     };
