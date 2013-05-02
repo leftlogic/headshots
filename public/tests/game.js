@@ -13,15 +13,23 @@ var player;
 var width = window.innerWidth,
     height = window.innerHeight;
 
+var assets = 2;
+
+function ready() {
+  renderer.render(scene, camera);
+}
+
 function resetBall(x, y, speed) {
   console.log(x, y, (speed * y) /10);
-  ball.position.z = 800;
-  ball.position.y = -200;
+  ball.position.z = 700;
+  ball.position.y = -180;
+
   ball.position.x = 0;
   ball.velocity.set(0, -20, -20 - (speed * y / 200));
   ball.velocity.rotateY(x);
   ball.velocity.rotateZ(0);
   ball.velocity.rotateX(y);
+  renderer.render(scene, camera);
 }
 
 function getContainer(klass) {
@@ -36,7 +44,7 @@ function getContainer(klass) {
 function getFloor(scene) {
   var material = new THREE.MeshBasicMaterial({ color: 0x16947B, wireframe:true, wireframeLinewidth: 2 });
 
-  var geom = new THREE.PlaneGeometry(1000, 1500, 20, 10);
+  var geom = new THREE.PlaneGeometry(2000, 1500, 20, 10);
   var floor = new THREE.Mesh(geom, material);
 
   floor.rotation.x = -89 * TO_RADIANS;
@@ -87,24 +95,31 @@ function buildStaticObjects() {
   };
 
   var floor = getFloor(scene);
-  player = getPlayer(scene, floor, ready);
+  player = getPlayer(scene, floor);
+  ready();
 
 }
 
-function getPlayer(scene, floor, ready) {
+function getPlayer(scene, floor) {
 
   // TODO add billboard
-  var material = new THREE.MeshBasicMaterial({
-    overdraw: true,
+/*  var material = new THREE.MeshBasicMaterial({
     map: new THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', undefined, ready)
+  });
+*/
+
+  var material = new THREE.ParticleBasicMaterial( { 
+    map: THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', null, ready)
   });
 
   var height = 430,
       width = 140,
       scale = 0.675;
 
-  var geom = new THREE.PlaneGeometry(width, height, 0, 0);
-  var player = new THREE.Mesh(geom, material);
+ // var geom = new THREE.PlaneGeometry(width, height, 0, 0);
+
+  var player = new THREE.Particle( material );
+//  var player = new THREE.Mesh(geom, material);
 
   var y = ((height / 2) * scale) + floor.position.y;
 
@@ -114,6 +129,7 @@ function getPlayer(scene, floor, ready) {
   player.scale.x = player.scale.y = scale;
 
   scene.add(player);
+
   return player;
 }
 
@@ -155,7 +171,7 @@ console.log(rect1, rect2);
 
 function loop() {
 //  requestAnimationFrame(loop);
-  var ballradius = ball.size;
+  var ballradius = 38;
 
   ball.updatePhysics();
   if (ball.position.y-ballradius<floor.position.y) {
@@ -163,7 +179,7 @@ function loop() {
     ball.velocity.y *= -0.7;
   }
 
-  if ((ball.position.z < player.position.z) && (ball.position.z - ball.velocity.z > player.position.z)) {
+  if ((ball.position.z - ballradius < player.position.z) && (ball.position.z - ballradius - ball.velocity.z > player.position.z)) {
 
     var p = {
       width: player.material.map.image.width * player.scale.x,
@@ -176,10 +192,10 @@ function loop() {
     p.y -= p.height/2;
 
     var b = {
-      width: ball.size * 2,
-      height: ball.size * 2,
-      x: ball.position.x - ball.size,
-      y: ball.position.y - ball.size,
+      width: ballradius * 2,
+      height: ballradius * 2,
+      x: ball.position.x - ballradius,
+      y: ball.position.y - ballradius
     };
 
     console.log(ball.position.x);
@@ -215,6 +231,10 @@ function init() {
   scene.add(ball);
   resetBall();
 
+  var player = getPlayer(scene, floor);
+  scene.add(player);
+
+
   document.body.addEventListener('touchmove', function (e) {
     e.preventDefault();
   });
@@ -228,9 +248,11 @@ function init() {
     resetBall(track.momentumX, track.momentumY, track.duration);
   };
 
+  resetBall();
+  renderer.render(scene, camera);
+
 
   setInterval(loop, 1000 / 30);
-  //loop();
 }
 
 

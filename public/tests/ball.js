@@ -24,7 +24,7 @@ var Ball = function (scale) {
   // });
 
   var material = new THREE.ParticleBasicMaterial( { 
-    map: THREE.ImageUtils.loadTexture('/images/ball.png')
+    map: THREE.ImageUtils.loadTexture('/images/ball.png', null, ready)
   });
 
 /*  var material = new THREE.SpriteMaterial({
