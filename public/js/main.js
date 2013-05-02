@@ -243,6 +243,6 @@ var scene = $('.scene');
 // });
 
 
-// window.onload = init;
+// window.addEventListener('load', init, false);
 
 })();

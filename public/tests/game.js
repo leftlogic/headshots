@@ -79,13 +79,60 @@ function getCamera() {
   return camera;
 }
 
-function getPlayer(scene) {
-  var material = new THREE.ParticleBasicMaterial({
-    map: THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', null, redrawAll)
+function generateSprite() {
+  var canvas = document.createElement('canvas'),
+      ctx = canvas.getContext('2d');
+
+  var positions = {};
+
+  var types = 'center right center left'.split(' ');
+
+  ['center','left','right', 'hit1', 'hit2'].forEach(function (position) {
+    var i = positions[position] = new Image();
+    i.src = '/images/player-' + game.me.letter + '-' + position + '.png';
   });
 
-  var height = 430,
-      width = 140,
+  canvas.width = 400;
+  canvas.height = 450;
+
+  var clear = function () {
+    ctx.clearRect(0, 0, 400, 450);
+  };
+
+  var timer = null;
+
+  window.hit = function () {
+    clearTimeout(timer);
+    clear();
+    ctx.drawImage(positions.hit1, 0, 0);
+    setTimeout(function () {
+      clear();
+      ctx.drawImage(positions.hit2, 0, 0);
+    }, 400);
+  };
+
+  var ctr = 0;
+
+  function draw() {
+    clear();
+    ctr = ctr % types.length;
+    ctx.drawImage(positions[types[ctr++]], 0, 0);
+    timer = setTimeout(draw, 2000);
+  }
+
+  draw();
+
+  return canvas;
+}
+
+function getPlayer(scene) {
+  var material = new THREE.ParticleBasicMaterial({
+    // map: THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', null, redrawAll)
+    map: new THREE.Texture(generateSprite())
+  });
+
+  var height = 450,
+      width = 400,
       scale = 0.675;
 
   var player = interactive.player = new THREE.Particle(material);
@@ -109,7 +156,7 @@ function buildStaticObjects() {
   var floor = actor.floor = getFloor(scene);
 
   // note: the floor must be created before getPlayer, as it's referred to
-  background.player = getPlayer(scene);
+  // background.player = getPlayer(scene);
 
   var renderer = background.renderer = new THREE.CanvasRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -230,7 +277,7 @@ function randomRange(min, max){
   return ((Math.random()*(max-min)) + min);
 }
 
-window.onload = init;
+window.addEventListener('load', init, false);
 
 window.addEventListener('resize', function () {
   var w = window.innerWidth,
