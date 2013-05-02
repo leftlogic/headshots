@@ -1,4 +1,4 @@
-/*global rtc:true, alert:true, pin:true*/
+/*global rtc:true, alert:true, pin:true, get:true, game:true*/
 "use strict";
 
 var $ = document.querySelector.bind(document);
@@ -135,44 +135,42 @@ function init() {
     alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
   }
 
-  // get('/pin', function (pin) {
-    rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
+  rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
 
-    rtc.on('add remote stream', function(stream, socketId) {
-      console.log("ADDING REMOTE STREAM...");
-      // var clone = cloneVideo('you', socketId);
-      video = document.createElement('video');
-      video.src = window.URL.createObjectURL(stream);
-      video.autoplay = true;
-      video.id = 'remote' + socketId;
-      video.play();
+  rtc.on('add remote stream', function(stream, socketId) {
+    console.log("ADDING REMOTE STREAM...");
+    // var clone = cloneVideo('you', socketId);
+    video = document.createElement('video');
+    video.src = window.URL.createObjectURL(stream);
+    video.autoplay = true;
+    video.id = 'remote' + socketId;
+    video.play();
 
-      if (video.readyState === 4) {
+    if (video.readyState === 4) {
+      renderVideo(video);
+    } else {
+      video.addEventListener('canplay', function () {
         renderVideo(video);
-      } else {
-        video.addEventListener('canplay', function () {
-          renderVideo(video);
-        });
-      }
+      });
+    }
 
-      rtc.attachStream(stream, video);
-    });
-    rtc.on('disconnect stream', function(socketId) {
-      console.log('remove ' + socketId);
+    rtc.attachStream(stream, video);
+  });
+  rtc.on('disconnect stream', function(socketId) {
+    console.log('remove ' + socketId);
 
-      // 1. remove old canvas
-      // 2. cancel timer (based on id on video)
-      // 3. remove video element
+    // 1. remove old canvas
+    // 2. cancel timer (based on id on video)
+    // 3. remove video element
 
-      var video = document.getElementById('remote' + socketId);
-      var canvas = $('.face canvas');
-      canvas.parentNode.removeChild(canvas);
-      clearInterval(video.dataset.timer);
-      video.parentNode.removeChild(video);
-    });
+    var video = document.getElementById('remote' + socketId);
+    var canvas = $('.face canvas');
+    canvas.parentNode.removeChild(canvas);
+    clearInterval(video.dataset.timer);
+    video.parentNode.removeChild(video);
+  });
 
-    initSocket();
-  // });
+  initSocket();
 }
 
 function renderVideo(video) {
@@ -196,14 +194,7 @@ function renderVideo(video) {
 
   setInterval(function () {
     ctx.drawImage(video, x, y, narrow, narrow, 0, 0, target, target);
-    // face.style.backgroundImage = 'url(' + ctx.canvas.toDataURL('image/png') + ')';
   }, 1000 / 12);
-
-  // var updateVideo = function () {
-  //   window.requestAnimationFrame(updateVideo);
-  // };
-
-  // window.requestAnimationFrame(updateVideo);
 }
 
 function bind(el, handler) {
@@ -232,7 +223,26 @@ bind($('#pause'), pause);
 bind($('#resume'), resume);
 bind($('#exit'), exit);
 
+var scene = $('.scene');
 
-window.onload = init;
+// var 
+
+bind($('.face'), function (event) {
+  event.preventDefault();
+  // next person's turn
+  if (game.turn) {
+    get('/hit', function (success) {
+      if (success) {
+        game.me.score++;
+      }
+
+      game.turn = false;
+      game.currentPlayer = game.them.letter;
+    });
+  }
+});
+
+
+// window.onload = init;
 
 })();

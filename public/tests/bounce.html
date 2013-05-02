@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<!--
+  Created using jsbin.com
+  Source can be edited via http://jsbin.com/agicim/2/edit
+-->
+<head>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r55/three.min.js"></script>
+ <script src="https://dl.dropboxusercontent.com/u/5096013/three.js/examples/js/renderers/CSS3DRenderer.js"></script>
+  <meta charset=utf-8 />
+<title>JS Bin</title>
+
+<style id="jsbin-css">
+
+</style>
+</head>
+  
+<body>
+  
+<script>
+var camera, scene, renderer;
+			var geometry, material, ball;
+
+			//var scene2, renderer2;
+
+			var counter = 0, tiles = [];
+
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+				camera.position.set( 0, 50, 200 );
+
+				// controls = new THREE.TrackballControls( camera );
+				// 
+				// 	controls.rotateSpeed = 1.0;
+				// 	controls.zoomSpeed = 1.2;
+				// 	controls.panSpeed = 0.8;
+				// 
+				// 	controls.noZoom = false;
+				// 	controls.noPan = false;
+				// 
+				// 	controls.staticMoving = false;
+				// 	controls.dynamicDampingFactor = 0.3;
+				// 
+				// 	controls.keys = [ 65, 83, 68 ];
+	
+				scene = new THREE.Scene();
+
+				// geometry = new THREE.CubeGeometry( 200, 200, 200 );
+				// material = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, wireframeLinewidth: 1 } );
+				// // 
+				// mesh = new THREE.Mesh( geometry, material );
+				// scene.add( mesh );
+
+				// renderer = new THREE.CanvasRenderer();
+				// 		renderer.setSize( window.innerWidth, window.innerHeight );
+				// 		document.body.appendChild( renderer.domElement );
+		
+				//
+
+				//scene2 = new THREE.Scene();
+
+				for ( var i = 0; i < 20; i ++ ) {
+					var element = document.createElement( 'div' );
+					element.style.width = '50px';
+					element.style.height = '50px';
+					element.style.border = '1px black solid';// = new THREE.Color( Math.random() * 0xffffff ).getStyle();
+					element.style.background = new THREE.Color( 0x00ff00 ).getStyle();
+					var object = new THREE.CSS3DObject( element );
+					object.position.x = (i%5 -2)* 50; // Math.random() * 200 - 100;
+					object.position.y = 0;//Math.random() * 200 - 100;
+					object.position.z = (Math.floor(i/5)-2)*50;// Math.random() * 200 - 100;
+					//object.scale.x = Math.random() + 0.5;
+					//object.scale.y = Math.random() + 0.5;
+					object.rotation.x = -Math.PI/2;
+					scene.add( object );
+					tiles.push(object); 
+				}
+
+				var ballcanvas = document.createElement('canvas'); 
+				ballcanvas.width = 100; 
+				ballcanvas.height = 100; 
+				var c = ballcanvas.getContext('2d'); 
+				c.fillStyle = 'red'
+				c.arc(50,50,50,0,Math.PI*2,true); 
+				c.fill(); 
+				ball = new THREE.CSS3DObject(ballcanvas); 
+				ball.scale.set(0.2,0.2,0.2);
+				scene.add(ball); 
+
+
+				renderer = new THREE.CSS3DRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.domElement.style.position = 'absolute';
+				renderer.domElement.style.top = 0;
+				document.body.appendChild( renderer.domElement );
+
+				// setInterval(animate, 33); 
+				animate();
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				//controls.update();
+				ball.position.y = (Math.sin(counter*0.05)+1) * 50; 
+
+				renderer.render(scene, camera);
+				counter++;
+
+			}
+</script>
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+</body>
+</html>

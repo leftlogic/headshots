@@ -20,14 +20,16 @@ function request(type, url, opts, callback) {
   xhr.setRequestHeader('x-requested-with', 'XMLHttpRequest');
 
   xhr.onload = function () {
-    callback(null, JSON.parse(xhr.response));
+    callback.call(xhr, null, JSON.parse(xhr.response));
   };
 
   xhr.onerror = function () {
-    callback(true);
+    callback.call(xhr, true);
   };
 
   xhr.send(opts ? fd : null);
+
+  return xhr;
 }
 
 var get = request.bind(this, 'GET');

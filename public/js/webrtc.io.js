@@ -177,6 +177,7 @@ if (navigator.webkitGetUserMedia) {
       });
 
       rtc.on('receive_ice_candidate', function(data) {
+        console.log('receive_ice_candidate', data);
         var candidate = new nativeRTCIceCandidate(data);
         rtc.peerConnections[data.socketId].addIceCandidate(candidate);
         rtc.fire('receive ice candidate', candidate);

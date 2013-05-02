@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<!--
+  Created using jsbin.com
+  Source can be edited via http://jsbin.com/azevox/1/edit
+-->
+<head>
+<meta charset=utf-8 />
+<title>JS Bin</title>
+</head>
+<body>
+  <p id="score">0</p>
+  <p id="me" class="name">Name?</p>
+  <p>And again: <span class="name"></span></p>
+<script src="/js/bind.js"></script>
+<script>
+var data = Bind({
+  me: {
+    score: 10,
+    name: "Remy"
+  }
+}, {
+  'me.name': '.name',
+  'me.score': '#score'
+});
+
+console.log(data);
+</script>
+</body>
+</html>
