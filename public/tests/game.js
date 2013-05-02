@@ -108,12 +108,10 @@ function getPlayer(scene, floor, ready) {
   player.position.y = y;
   player.position.z = -220;
   player.position.x = -10;
-  
   player.scale.x = player.scale.y = scale;
 
   scene.add(player);
   return player;
-  
 }
 
 function createScene() {
