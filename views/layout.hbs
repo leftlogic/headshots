@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html id="headshots">
+<html id="headshots"{{#if wide}} class="wide"{{/if}}>
 <head>
   <meta charset=utf-8 />
 <!--
@@ -29,7 +29,7 @@ Built by @leftlogic aka @rem
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body{{#if wide}} class="wide"{{/if}}>
+<body>
   {{{body}}}
   {{#if settings.isproduction}}
   <script>
