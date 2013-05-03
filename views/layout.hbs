@@ -4,14 +4,14 @@
   <meta charset=utf-8 />
 <!--
 
-                   __    __   _______     ___       _______  
+                   __    __   _______     ___       _______
                   |  |  |  | |   ____|   /   \     |       \ 
                   |  |__|  | |  |__     /  ^  \    |  .--.  |
                   |   __   | |   __|   /  /_\  \   |  |  |  |
                   |  |  |  | |  |____ /  _____  \  |  '--'  |
                   |__|  |__| |_______/__/     \__\ |_______/ 
-                                                             
-            _______. __    __    ______   .___________.    _______. __  
+
+            _______. __    __    ______   .___________.    _______. __
            /       ||  |  |  |  /  __  \  |           |   /       ||  | 
           |   (----`|  |__|  | |  |  |  | `---|  |----`  |   (----`|  | 
            \   \    |   __   | |  |  |  |     |  |        \   \    |  | 
@@ -29,7 +29,7 @@ Built by @leftlogic aka @rem
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body{{#if wide}} class="wide"{{/if}}>
   {{{body}}}
   {{#if settings.isproduction}}
   <script>

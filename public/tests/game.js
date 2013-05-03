@@ -17,7 +17,7 @@ var actor = {
   ball: null,
   floor: null,
   player: null,
-  activePosition: null
+  activePosition: 'center'
 };
 
 var playerDimensions = {
@@ -138,10 +138,15 @@ function generateSprite() {
 
   var positions = {};
 
-  var types = 'center right center left'.split(' ');
-
   ['center','left','right', 'hit1', 'hit2'].forEach(function (position) {
     var i = positions[position] = new Image();
+    // render the center position
+    if (position === 'center') {
+      i.onload = function () {
+        ctx.drawImage(positions[position], 0, 0);
+      };
+    }
+
     i.src = '/images/player-' + game.me.letter + '-' + position + '.png';
   });
 
@@ -180,26 +185,36 @@ function generateSprite() {
           y = (h - narrow) / 2,
           target = 40;
 
-      ctx.drawImage(video, x, y, narrow, narrow, 0, 0, target, target);
+      var dim = playerDimensions.center.hit;
+      ctx.drawImage(video, x, y, narrow, narrow, dim.x, dim.y, dim.width, dim.height);
     }
   };
 
   var ctr = 0;
+  var types = 'left center right'.split(' ');
 
-  function draw() {
+  $.on('orientation', function (event) {
+    var i = ++event.data.gamma; // convert from -1, 0, 1 to 0, 1, 2
     clear();
-    ctr++;
-    ctr = ctr % types.length;
-    ctx.drawImage(positions[types[ctr]], 0, 0);
-    actor.activePosition = types[ctr];
-    var dim = playerDimensions[types[ctr]];
-    timer = setTimeout(draw, 2000);
+    ctx.drawImage(positions[types[i]], 0, 0);
+    actor.activePosition = types[i];
+  });
 
-    // TODO remove debug
-    //ctx.strokeRect(dim.x, dim.y, dim.width, dim.height);
-  }
+  // function draw() {
+  //   clear();
+  //   // ctr++;
+  //   // ctr = ctr % types.length;
+  //   ctr = 1;
+  //   ctx.drawImage(positions[types[ctr]], 0, 0);
+  //   actor.activePosition = types[ctr];
+  //   var dim = playerDimensions[types[ctr]];
+  //   timer = setTimeout(draw, 2000);
 
-  draw();
+  //   // TODO remove debug
+  //   //ctx.strokeRect(dim.x, dim.y, dim.width, dim.height);
+  // }
+
+  // draw();
 
   return canvas;
 }

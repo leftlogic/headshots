@@ -11,10 +11,17 @@
 html, body {
   height: 100%;
   padding: 0;
-/*  max-width: 1000px;*/
   margin: 0 auto;
   background: #2c3e50;
   color: #ECF0F1;
+}
+
+body {
+  max-width: 400px;
+}
+
+body.wide {
+  max-width: 100%;
 }
 
 canvas {
@@ -355,13 +362,13 @@ input[type=submit] {
 }
 
 video {
-    position: absolute;
-  /*display: none;*/
-;
-    top: 0;
-    left: 0;
-    z-index: 999999999999;
-    background: red;
+  position: absolute;
+  display: none;
+
+  top: 0;
+  left: 0;
+  z-index: 999999999999;
+  background: red;
 }
 
 #pause {

@@ -1,8 +1,6 @@
 /*global rtc:true, alert:true, pin:true, get:true, game:true*/
 "use strict";
 
-var $ = document.querySelector.bind(document);
-
 // fitText($('#welcome p'), 1.2);
 // fitText($('h1'), 1.2);
 
@@ -107,7 +105,8 @@ function initSocket() {
   rtc.on(socket.event, function() {
     var data = socket.recv.apply(this, arguments);
     // if (data.type === 'orientation') {
-      player.className = 'player ' + positionStates[data.gamma];
+      // player.className = 'player ' + positionStates[data.gamma];
+      $.trigger('orientation', data);
     // }
 
     // if (video) {
@@ -120,7 +119,7 @@ function init() {
   rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
 
   if (PeerConnection) {
-    rtc.createStream({
+    false && rtc.createStream({
       // 'video': {'mandatory': {}, 'optional': []},
       'video': true,
       'audio': false
@@ -171,7 +170,7 @@ function init() {
     // 3. remove video element
 
     var video = document.getElementById('remote' + socketId);
-    video.parentNode.removeChild(video);
+    if (video) video.parentNode.removeChild(video);
   });
 
   initSocket();
