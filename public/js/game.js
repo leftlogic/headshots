@@ -76,14 +76,32 @@ function map(x, in_min, in_max, out_min, out_max) {
 }
 
 function resetBall(posX, x, y, speed) {
-  if (!posX) posX = 0;
-  if (!x) x = 0;
-  if (!y) y = 0;
-  if (!speed) speed = 0;
+  if (!posX) {posX = 0;}
+  if (!x) {x = 0;}
+  if (!y) {y = 0;}
+  if (!speed) {speed = 0;}
   var ball = actor.ball;
 
-  ball.position.z = 620;
-  ball.position.y = -180;
+  if (game.turn === true) {
+    $.trigger('throw', {
+      posX: posX,
+      x: x,
+      y: y,
+      speed: speed
+    });
+  }
+  
+  posX = window.innerWidth / 2;
+  
+  var z = game.turn ? 620 : -200,
+      y = game.turn ? -180 : -95;
+      
+  if (!game.turn) {
+    speed *= -1;
+  }
+
+  ball.position.z = z;
+  ball.position.y = y;
 
   ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
 
@@ -136,12 +154,13 @@ function generateSprite() {
   var canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
-  var positions = {};
+  var positions = {},
+      defaultPosition = game.turn ? 'center' : 'throw1';
 
-  ['center','left','right', 'hit1', 'hit2'].forEach(function (position) {
+  ['center','left','right', 'hit1', 'hit2', 'throw1'].forEach(function (position) {
     var i = positions[position] = new Image();
     // render the center position
-    if (position === 'center') {
+    if (position === defaultPosition) {
       i.onload = function () {
         ctx.drawImage(positions[position], 0, 0);
       };
@@ -238,7 +257,7 @@ function getPlayer(scene) {
   var player = interactive.player = new THREE.Particle(material);
   player.position.y = ((height / 2) * scale) + actor.floor.position.y;
   player.position.z = -220;
-  player.position.x = -10;
+  player.position.x = 7;
   player.scale.x = player.scale.y = scale;
 
   scene.add(player);
@@ -278,7 +297,7 @@ function createInteractiveScene() {
 
   container.appendChild(renderer.domElement);
 
-  // debug();
+  //debug();
 
   return scene;
 }
@@ -297,25 +316,27 @@ function debug() {
   var b = makePlane();
   var h = makePlane();
 
-  var showDebug = true;
+  var showDebug = false;
   var update = function (player, ball, hit) {
-    // p.position.x = player.x + player.width / 2;
-    // p.position.y = player.y + player.height / 2;
-    // p.position.z = actor.player.position.z;
-    // p.scale.x = player.width;
-    // p.scale.y = player.height;
-
-    b.position.x = ball.x + ball.width / 2;
-    b.position.y = ball.y + ball.height / 2;
-    b.position.z = actor.ball.position.z;
-    b.scale.x = ball.width;
-    b.scale.y = ball.height;
-
-    h.position.x = hit.x + hit.width / 2;
-    h.position.y = hit.y + hit.height / 2;
-    h.position.z = actor.player.position.z;
-    h.scale.x = hit.width;
-    h.scale.y = hit.height;
+    if (showDebug) {
+      p.position.x = player.x + player.width / 2;
+      p.position.y = player.y + player.height / 2;
+      p.position.z = actor.player.position.z;
+      p.scale.x = player.width;
+      p.scale.y = player.height;
+  
+      b.position.x = ball.x + ball.width / 2;
+      b.position.y = ball.y + ball.height / 2;
+      b.position.z = actor.ball.position.z;
+      b.scale.x = ball.width;
+      b.scale.y = ball.height;
+  
+      h.position.x = hit.x + hit.width / 2;
+      h.position.y = hit.y + hit.height / 2;
+      h.position.z = actor.player.position.z;
+      h.scale.x = hit.width;
+      h.scale.y = hit.height;
+    }
   };
 
   interactive.debug = {
@@ -357,18 +378,21 @@ function loop() {
     ball.velocity.y *= -0.7;
   }
 
+  var px = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
+      py = player.position.x - ((playerDimensions.width * player.scale.x) / 2);
+
   p = {
     width: dims.width * player.scale.x,
     height: dims.height * player.scale.y,
-    x: (player.position.x - ((playerDimensions.width * player.scale.x) / 2)) + (dims.x * player.scale.x),
-    y: (player.position.y + ((playerDimensions.height * player.scale.y) / 2)) - (dims.y * player.scale.y) - dims.height * player.scale.y
+    x: py + (dims.x * player.scale.x),
+    y: px - (dims.y * player.scale.y) - dims.height * player.scale.y
   };
 
   h = {
     width: dims.hit.width * player.scale.x,
     height: dims.hit.height * player.scale.y,
-    x: (player.position.x - ((playerDimensions.width * player.scale.x) / 2)) + (dims.hit.x * player.scale.x),
-    y: (player.position.y + ((playerDimensions.height * player.scale.y) / 2)) - (dims.hit.y * player.scale.y) - dims.hit.height * player.scale.y
+    x: px + (dims.hit.x * player.scale.x),
+    y: py - (dims.hit.y * player.scale.y) - dims.hit.height * player.scale.y
   };
 
   b = {
@@ -394,7 +418,7 @@ function loop() {
 
   // only render whilst the ball is moving
   if (true || Math.abs(ball.velocity.z) > 0.1) {
-    // interactive.debug.update(p, b, h);
+    //interactive.debug.update(p, b, h);
     interactive.renderer.render(interactive.scene, interactive.camera);
   }
 
@@ -424,8 +448,16 @@ function init() {
     var x = track.x - track.momentumX;
     var y = (track.upY - track.downY) - track.momentumY;
 
-    resetBall(track.downX, track.momentumX, y / window.height, track.duration);
+    //if (game.turn === true) {
+      resetBall(track.downX, track.momentumX, y / window.height, track.duration);
+    //}
   };
+
+  $.on('throw', function (event) {
+    if (game.turn === false) {
+      resetBall(event.data.posX, event.data.x, event.data.y, event.data.speed);
+    }
+  });
 
   resetBall(window.innerWidth / 2);
   redrawAll();

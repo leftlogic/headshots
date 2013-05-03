@@ -1,8 +1,5 @@
-/*global rtc:true, alert:true, pin:true, get:true, game:true*/
+/*global rtc:true, alert:true, pin:true, get:true, game:true, $:true*/
 "use strict";
-
-// fitText($('#welcome p'), 1.2);
-// fitText($('h1'), 1.2);
 
 (function () {
 
@@ -10,7 +7,6 @@ var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
 
 var video = null;
-
 
 function throttle(fn, threshhold, scope) {
   threshhold || (threshhold = 250);
@@ -35,15 +31,15 @@ function throttle(fn, threshhold, scope) {
   };
 }
 
+function map(x, in_min, in_max, out_min, out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 function removeVideo(socketId) {
   var video = document.getElementById('remote' + socketId);
   if (video) {
     video.parentNode.removeChild(video);
   }
-}
-
-function map(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 var websocket = {
@@ -93,6 +89,15 @@ function initSocket() {
       }
     }));
   }, 100), false);
+
+  $.on('throw', function (event) {
+    if (game.turn === true) {
+      socket.send(JSON.stringify({
+        eventName: 'throw',
+        data: event.data
+      }));
+    }
+  });
 
   var player = $('.player'),
       positionStates = {

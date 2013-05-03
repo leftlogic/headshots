@@ -12,7 +12,7 @@
 <div class="game"></div>
 <div id="overlays">
   <a id="pause" href="#pause">l l</a>
-  <span id="pin">#{{pin}}</span>
+  {{#unless settings.isproduction}}<span id="pin">#{{pin}}</span>{{/unless}}
   <span id="myscore">0</span>
 </div>
 <script>
