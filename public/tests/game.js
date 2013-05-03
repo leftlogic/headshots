@@ -16,7 +16,31 @@ var background = {
 var actor = {
   ball: null,
   floor: null,
-  player: null
+  player: null,
+  activePosition: null
+};
+
+var playerDimensions = {
+  width: 0,
+  height: 0,
+  center: {
+    x: 125,
+    y: 20,
+    width: 130,
+    height: 430
+  },
+  left: {
+    x: 60,
+    y: 65,
+    width: 165,
+    height: 400
+  },
+  right: {
+    x: 200,
+    y: 70,
+    width: 180,
+    height: 390
+  }
 };
 
 var TO_RADIANS = Math.PI/180;
@@ -29,17 +53,29 @@ function redrawAll() {
   interactive.renderer.render(interactive.scene, interactive.camera);
 }
 
+function map(x, in_min, in_max, out_min, out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 function resetBall(posX, x, y, speed) {
+  if (!posX) posX = 0;
+  if (!x) x = 0;
+  if (!y) y = 0;
+  if (!speed) speed = 0;
   var ball = actor.ball;
-  ball.position.z = 700;
-  ball.position.y = -180;
-  ball.position.x = posX / 2 - window.innerWidth / 4;
   
-  ball.velocity.set(0, -20, -20 - (speed * y / 200));
+  ball.position.z = 650;
+  ball.position.y = -180;
+    
+  ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
+  
+  console.log(speed);
+
+  ball.velocity.set(0, 0, -speed * .5);
+  
   ball.velocity.rotateY(x);
   ball.velocity.rotateZ(0);
-  ball.velocity.rotateX(y);
-  interactive.renderer.render(interactive.scene, interactive.camera);
+  ball.velocity.rotateX(y * 80);
 }
 
 function getContainer(c) {
@@ -92,8 +128,8 @@ function generateSprite() {
     i.src = '/images/player-' + game.me.letter + '-' + position + '.png';
   });
 
-  canvas.width = 400;
-  canvas.height = 450;
+  playerDimensions.width = canvas.width = 400;
+  playerDimensions.height = canvas.height = 450;
 
   var clear = function () {
     ctx.clearRect(0, 0, 400, 450);
@@ -115,9 +151,15 @@ function generateSprite() {
 
   function draw() {
     clear();
+    ctr++;
     ctr = ctr % types.length;
-    ctx.drawImage(positions[types[ctr++]], 0, 0);
+    ctx.drawImage(positions[types[ctr]], 0, 0);
+    actor.activePosition = types[ctr];
+    var dim = playerDimensions[types[ctr]];
     timer = setTimeout(draw, 2000);
+
+    // TODO remove debug
+    //ctx.strokeRect(dim.x, dim.y, dim.width, dim.height);
   }
 
   draw();
@@ -127,7 +169,6 @@ function generateSprite() {
 
 function getPlayer(scene) {
   var material = new THREE.ParticleBasicMaterial({
-    // map: THREE.ImageUtils.loadTexture('/images/player-' + game.me.letter + '-center-3.png', null, redrawAll)
     map: new THREE.Texture(generateSprite())
   });
 
@@ -177,8 +218,50 @@ function createInteractiveScene() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   container.appendChild(renderer.domElement);
+  
+  //debug();
 
   return scene;
+}
+
+function makePlane() {
+  var material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe:true, wireframeLinewidth: 2 });
+  
+  var geom = new THREE.PlaneGeometry(1, 1, 10, 10);
+  var plane = new THREE.Mesh(geom, material);
+  
+  return plane;
+}
+
+function debug() {
+  var p = makePlane();
+  var b = makePlane();
+
+  var showDebug = true;
+  var update = function (player, ball) {
+    p.position.x = player.x + player.width / 2;
+    p.position.y = player.y + player.height / 2;
+    p.position.z = actor.player.position.z;
+    p.scale.x = player.width;
+    p.scale.y = player.height;
+
+    b.position.x = ball.x + ball.width / 2;
+    b.position.y = ball.y + ball.height / 2;
+    b.position.z = actor.ball.position.z;
+    b.scale.x = ball.width;
+    b.scale.y = ball.height;
+  };
+  
+  interactive.debug = {
+    player: p,
+    ball: b,
+    update: update
+  };
+  
+  interactive.scene.add(p);
+  interactive.scene.add(b);
+  
+  
 }
 
 function isObjectInTarget(rect1, rect2) {
@@ -191,12 +274,12 @@ function isObjectInTarget(rect1, rect2) {
 }
 
 function loop() {
-//  requestAnimationFrame(loop);
+  requestAnimationFrame(loop);
   var ballradius = 38;
 
   var ball = actor.ball,
       player = actor.player,
-      b, p;
+      b = {}, p = {};
 
   ball.updatePhysics();
 
@@ -206,25 +289,22 @@ function loop() {
     ball.velocity.y *= -0.7;
   }
 
-  if ((ball.position.z - ballradius < player.position.z) && (ball.position.z - ballradius - ball.velocity.z > player.position.z)) {
+  p = {
+    width: playerDimensions[actor.activePosition].width * player.scale.x,
+    height: playerDimensions[actor.activePosition].height * player.scale.y,
+    x: (player.position.x - ((playerDimensions.width * player.scale.x) / 2)) + (playerDimensions[actor.activePosition].x * player.scale.x),
+    y: (player.position.y + ((playerDimensions.height * player.scale.y) / 2)) - (playerDimensions[actor.activePosition].y * player.scale.y) - playerDimensions[actor.activePosition].height * player.scale.y
+  };
 
-    p = {
-      width: player.material.map.image.width * player.scale.x,
-      height: player.material.map.image.height * player.scale.y,
-      x: player.position.x,
-      y: player.position.y
-    };
+  b = {
+    width: ballradius * 2,
+    height: ballradius * 2,
+    x: ball.position.x - ballradius,
+    y: ball.position.y - ballradius
+  };
 
-    p.x -= p.width/2;
-    p.y -= p.height/2;
 
-    b = {
-      width: ballradius * 2,
-      height: ballradius * 2,
-      x: ball.position.x - ballradius,
-      y: ball.position.y - ballradius
-    };
-
+  if ((ball.position.z - ballradius < player.position.z) && (ball.position.z - ballradius - ball.velocity.z > player.position.z)) {    
     // if we hit the player, make the ball bounce backwards.
     if (isObjectInTarget(b, p)) {
       ball.velocity.z *= -0.7;
@@ -232,7 +312,8 @@ function loop() {
   }
 
   // only render whilst the ball is moving
-  if (Math.abs(ball.velocity.z) > 0.1) {
+  if (true || Math.abs(ball.velocity.z) > 0.1) {
+    //interactive.debug.update(p, b);
     interactive.renderer.render(interactive.scene, interactive.camera);
   }
 
@@ -260,15 +341,16 @@ function init() {
 
   track.up = function (event) {
     var x = track.x - track.momentumX;
-    var y = track.y - track.momentumY;
+    var y = (track.upY - track.downY) - track.momentumY;
 
-    resetBall(track.downX, track.momentumX, track.momentumY, track.duration);
+    resetBall(track.downX, track.momentumX, y / window.height, track.duration);
   };
 
-  resetBall();
+  resetBall(innerWidth/2);
   redrawAll();
 
-  setInterval(loop, 1000 / 30);
+  // setInterval(loop, 1000 / 30);
+  loop();
 }
 
 

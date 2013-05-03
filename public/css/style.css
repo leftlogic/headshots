@@ -231,9 +231,8 @@ input[type=submit] {
 }
 
 .bgmountains {
-  background: url(../images/mountains.png) no-repeat center bottom;
+  background: url(../images/mountains.png) repeat-x center bottom;
   height: 50%;
-  background-size: 100%;
 }
 
 .floor {
