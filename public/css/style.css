@@ -20,7 +20,7 @@ body {
   max-width: 400px;
 }
 
-body.wide {
+.wide body {
   max-width: 100%;
 }
 
