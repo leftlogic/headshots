@@ -13,11 +13,13 @@ var Ball = function (scale) {
   //   }
   // });
 
+  var ball = this;
+
   var material = new THREE.ParticleBasicMaterial( {
     map: THREE.ImageUtils.loadTexture('/images/ball.png', null, function () {
-      // this.size = this.width / 2 *
+      ball.size = material.map.image.width / 2 * ball.scale.x;
       window.redrawAll();
-    }.bind(this))
+    })
   });
 
   THREE.Particle.call( this, material );

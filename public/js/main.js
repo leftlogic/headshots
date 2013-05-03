@@ -117,44 +117,51 @@ function initSocket() {
 }
 
 function init() {
+  rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
+
   if (PeerConnection) {
     rtc.createStream({
-      'video': {'mandatory': {}, 'optional': []},
+      // 'video': {'mandatory': {}, 'optional': []},
+      'video': true,
       'audio': false
     }, function(stream) {
-      // var video = document.createElement('video');
-      // video.id = 'you';
-      // document.body.appendChild(video);
-      // document.getElementById('you').src = URL.createObjectURL(stream);
-      // document.getElementById('you').play();
+      var video = document.createElement('video');
+      video.id = 'you';
+      document.body.appendChild(video);
+      document.getElementById('you').src = URL.createObjectURL(stream);
+      document.getElementById('you').play();
       // videos.push(document.getElementById('you'));
-      // rtc.attachStream(stream, 'you');
+      // rtc.attachStream(stream, 'local');
       // subdivideVideos();
     });
   } else {
+    // TODO grab pic from the camera
     alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
   }
-
-  rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
 
   rtc.on('add remote stream', function(stream, socketId) {
     console.log("ADDING REMOTE STREAM...");
     // var clone = cloneVideo('you', socketId);
-    video = document.createElement('video');
+    window.video = video = document.createElement('video');
+    // rtc.attachStream(stream, video);
     video.src = window.URL.createObjectURL(stream);
     video.autoplay = true;
     video.id = 'remote' + socketId;
     video.play();
 
-    if (video.readyState === 4) {
-      renderVideo(video);
-    } else {
-      video.addEventListener('canplay', function () {
-        renderVideo(video);
-      });
-    }
+    console.log(video.readyState);
+    document.body.appendChild(video);
 
-    rtc.attachStream(stream, video);
+    // if (video.readyState === 4) {
+    //   renderVideo(video);
+    // } else {
+    //   video.addEventListener('canplay', function () {
+    //     console.log('ready');
+    //     renderVideo(video);
+    //   });
+    // }
+
+    // rtc.attachStream(stream, video);
   });
   rtc.on('disconnect stream', function(socketId) {
     console.log('remove ' + socketId);
@@ -164,37 +171,10 @@ function init() {
     // 3. remove video element
 
     var video = document.getElementById('remote' + socketId);
-    var canvas = $('.face canvas');
-    canvas.parentNode.removeChild(canvas);
-    clearInterval(video.dataset.timer);
     video.parentNode.removeChild(video);
   });
 
   initSocket();
-}
-
-function renderVideo(video) {
-  document.body.appendChild(video);
-
-  video.play();
-
-  var ctx = document.createElement('canvas').getContext('2d');
-  var w = video.videoWidth;
-  var h = video.videoHeight;
-
-  var narrow = w > h ? h : w,
-      x = (w - narrow) / 2,
-      y = (h - narrow) / 2,
-      target = 40;
-
-  ctx.canvas.height = ctx.canvas.width = target;
-
-  var face = $('.face');
-  face.appendChild(ctx.canvas);
-
-  setInterval(function () {
-    ctx.drawImage(video, x, y, narrow, narrow, 0, 0, target, target);
-  }, 1000 / 12);
 }
 
 function bind(el, handler) {
@@ -243,6 +223,6 @@ var scene = $('.scene');
 // });
 
 
-// window.addEventListener('load', init, false);
+window.addEventListener('load', init, false);
 
 })();

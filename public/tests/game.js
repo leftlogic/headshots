@@ -27,19 +27,37 @@ var playerDimensions = {
     x: 125,
     y: 20,
     width: 130,
-    height: 430
+    height: 430,
+    hit: {
+      x: 145,
+      y: 40,
+      width: 90,
+      height: 90
+    }
   },
   left: {
     x: 60,
     y: 65,
     width: 165,
-    height: 400
+    height: 400,
+    hit: {
+      x: 64,
+      y: 73,
+      width: 120,
+      height: 120
+    }
   },
   right: {
     x: 200,
     y: 70,
     width: 180,
-    height: 390
+    height: 390,
+    hit: {
+      x: 226,
+      y: 78,
+      width: 120,
+      height: 120
+    }
   }
 };
 
@@ -63,16 +81,15 @@ function resetBall(posX, x, y, speed) {
   if (!y) y = 0;
   if (!speed) speed = 0;
   var ball = actor.ball;
-  
-  ball.position.z = 650;
-  ball.position.y = -180;
-    
-  ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
-  
-  console.log(speed);
 
-  ball.velocity.set(0, 0, -speed * .5);
-  
+  ball.position.z = 620;
+  ball.position.y = -180;
+
+  ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
+
+
+  ball.velocity.set(0, 0, -speed * 0.35);
+
   ball.velocity.rotateY(x);
   ball.velocity.rotateZ(0);
   ball.velocity.rotateX(y * 80);
@@ -147,6 +164,26 @@ function generateSprite() {
     }, 400);
   };
 
+  var video = $('video');
+
+  window.updateVideo = function () {
+    if (!video) {
+      video = $('video');
+    }
+
+    if (video) {
+      var w = video.videoWidth;
+      var h = video.videoHeight;
+
+      var narrow = w > h ? h : w,
+          x = (w - narrow) / 2,
+          y = (h - narrow) / 2,
+          target = 40;
+
+      ctx.drawImage(video, x, y, narrow, narrow, 0, 0, target, target);
+    }
+  };
+
   var ctr = 0;
 
   function draw() {
@@ -218,50 +255,57 @@ function createInteractiveScene() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   container.appendChild(renderer.domElement);
-  
-  //debug();
+
+  // debug();
 
   return scene;
 }
 
 function makePlane() {
   var material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe:true, wireframeLinewidth: 2 });
-  
+
   var geom = new THREE.PlaneGeometry(1, 1, 10, 10);
   var plane = new THREE.Mesh(geom, material);
-  
+
   return plane;
 }
 
 function debug() {
   var p = makePlane();
   var b = makePlane();
+  var h = makePlane();
 
   var showDebug = true;
-  var update = function (player, ball) {
-    p.position.x = player.x + player.width / 2;
-    p.position.y = player.y + player.height / 2;
-    p.position.z = actor.player.position.z;
-    p.scale.x = player.width;
-    p.scale.y = player.height;
+  var update = function (player, ball, hit) {
+    // p.position.x = player.x + player.width / 2;
+    // p.position.y = player.y + player.height / 2;
+    // p.position.z = actor.player.position.z;
+    // p.scale.x = player.width;
+    // p.scale.y = player.height;
 
     b.position.x = ball.x + ball.width / 2;
     b.position.y = ball.y + ball.height / 2;
     b.position.z = actor.ball.position.z;
     b.scale.x = ball.width;
     b.scale.y = ball.height;
+
+    h.position.x = hit.x + hit.width / 2;
+    h.position.y = hit.y + hit.height / 2;
+    h.position.z = actor.player.position.z;
+    h.scale.x = hit.width;
+    h.scale.y = hit.height;
   };
-  
+
   interactive.debug = {
     player: p,
     ball: b,
+    hit: h,
     update: update
   };
-  
+
   interactive.scene.add(p);
   interactive.scene.add(b);
-  
-  
+  interactive.scene.add(h);
 }
 
 function isObjectInTarget(rect1, rect2) {
@@ -275,11 +319,13 @@ function isObjectInTarget(rect1, rect2) {
 
 function loop() {
   requestAnimationFrame(loop);
-  var ballradius = 38;
 
   var ball = actor.ball,
       player = actor.player,
-      b = {}, p = {};
+      b = {}, p = {}, h = {},
+      dims = playerDimensions[actor.activePosition];
+
+  var ballradius = ball.size;
 
   ball.updatePhysics();
 
@@ -290,10 +336,17 @@ function loop() {
   }
 
   p = {
-    width: playerDimensions[actor.activePosition].width * player.scale.x,
-    height: playerDimensions[actor.activePosition].height * player.scale.y,
-    x: (player.position.x - ((playerDimensions.width * player.scale.x) / 2)) + (playerDimensions[actor.activePosition].x * player.scale.x),
-    y: (player.position.y + ((playerDimensions.height * player.scale.y) / 2)) - (playerDimensions[actor.activePosition].y * player.scale.y) - playerDimensions[actor.activePosition].height * player.scale.y
+    width: dims.width * player.scale.x,
+    height: dims.height * player.scale.y,
+    x: (player.position.x - ((playerDimensions.width * player.scale.x) / 2)) + (dims.x * player.scale.x),
+    y: (player.position.y + ((playerDimensions.height * player.scale.y) / 2)) - (dims.y * player.scale.y) - dims.height * player.scale.y
+  };
+
+  h = {
+    width: dims.hit.width * player.scale.x,
+    height: dims.hit.height * player.scale.y,
+    x: (player.position.x - ((playerDimensions.width * player.scale.x) / 2)) + (dims.hit.x * player.scale.x),
+    y: (player.position.y + ((playerDimensions.height * player.scale.y) / 2)) - (dims.hit.y * player.scale.y) - dims.hit.height * player.scale.y
   };
 
   b = {
@@ -304,16 +357,22 @@ function loop() {
   };
 
 
-  if ((ball.position.z - ballradius < player.position.z) && (ball.position.z - ballradius - ball.velocity.z > player.position.z)) {    
+  if ((ball.position.z - ballradius < player.position.z) && (ball.position.z - ballradius - ball.velocity.z > player.position.z)) {
     // if we hit the player, make the ball bounce backwards.
     if (isObjectInTarget(b, p)) {
       ball.velocity.z *= -0.7;
     }
+
+    if (isObjectInTarget(b, h)) {
+      hit();
+    }
   }
+
+  window.updateVideo();
 
   // only render whilst the ball is moving
   if (true || Math.abs(ball.velocity.z) > 0.1) {
-    //interactive.debug.update(p, b);
+    // interactive.debug.update(p, b, h);
     interactive.renderer.render(interactive.scene, interactive.camera);
   }
 
@@ -328,7 +387,7 @@ function init() {
   buildStaticObjects();
   var scene = interactive.scene = createInteractiveScene();
 
-  var ball = actor.ball = new Ball(0.25);
+  var ball = actor.ball = new Ball(0.15);
   ball.drag = 0.985;
 
   scene.add(ball);
@@ -346,7 +405,7 @@ function init() {
     resetBall(track.downX, track.momentumX, y / window.height, track.duration);
   };
 
-  resetBall(innerWidth/2);
+  resetBall(window.innerWidth / 2);
   redrawAll();
 
   // setInterval(loop, 1000 / 30);
