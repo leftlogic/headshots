@@ -194,7 +194,13 @@ function generateSprite() {
   var types = 'left center right'.split(' ');
 
   $.on('orientation', function (event) {
-    var i = ++event.data.gamma; // convert from -1, 0, 1 to 0, 1, 2
+    var i = 1;
+    if (event.data.raw < -75 || event.data.raw > 200) {
+      i = 0;
+    } else if (event.data.raw > 75) {
+      i = 2; 
+    }
+
     clear();
     ctx.drawImage(positions[types[i]], 0, 0);
     actor.activePosition = types[i];

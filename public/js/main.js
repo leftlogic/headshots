@@ -119,9 +119,9 @@ function init() {
   rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
 
   if (PeerConnection) {
-    false && rtc.createStream({
-      // 'video': {'mandatory': {}, 'optional': []},
-      'video': true,
+    rtc.createStream({
+      'video': {'mandatory': {}, 'optional': []},
+      // 'video': false,
       'audio': false
     }, function(stream) {
       var video = document.createElement('video');
