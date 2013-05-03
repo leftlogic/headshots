@@ -114,7 +114,7 @@ Track.prototype = {
   upY: 0,
   momentumX: 0,
   momentumY: 0,
-  down: false,
+  isdown: false,
   touch: touch,
   events: {
     up: touch ? 'touchend' : 'mouseup',

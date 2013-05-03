@@ -8,12 +8,16 @@ var port = process.env.PORT || 8080,
     // WebSocketServer = require('ws').Server,
     // wss = new WebSocketServer({ server: server }),
     MemoryStore = express.session.MemoryStore,
-    store = new MemoryStore();
+    store = new MemoryStore(),
+    gzippo = require('gzippo'),
+    pkg = require('./package.json');
 
 app.configure(function(){
   app.set('port', port);
   app.set('views', __dirname + '/views');
   app.set('view engine' ,'hbs');
+
+  app.set('version', pkg.version);
 
   // load hbs helpers
   require ('./views/helpers.js');
@@ -29,11 +33,15 @@ app.configure(function(){
 
   // include our router before the static router
   require('./lib/routes')(app);
-  app.use(express.static(__dirname + '/public'));
 });
 
 app.configure('production', function () {
+  app.use(gzippo.staticGzip(__dirname + '/public'));
   app.set('isproduction', true);
+});
+
+app.configure('development', function () {
+  app.use(express.static(__dirname + '/public'));
 });
 
 if (module.parent) {

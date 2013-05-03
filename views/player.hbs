@@ -8,16 +8,7 @@
 </div>
 <div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
   <div class="bgmountains"></div>
-  <div class="floor">
-<!--     <div class="player center">
-      <span id="theirscore">0</span>
-      <div class="face"></div>
-    </div>
-   </div>
-  <div class="ball">
-    <div class="arrow"></div>
-  </div>-->
-</div>
+  <div class="floor"></div>
 <div class="game"></div>
 <div id="overlays">
   <a id="pause" href="#pause">l l</a>
@@ -27,14 +18,16 @@
 <script>
 var pin = {{pin}};
 </script>
+{{#unless settings.isproduction}}
+<script src="/js/webrtc.io.js"></script>
 <script src="/js/min.js"></script>
 <script src="/js/bind.js"></script>
-<script src="/js/webrtc.io.js"></script>
 <script src="/js/xhr.js"></script>
+<script src="/js/track.js"></script>
+<script src="/js/three.js"></script>
 <script src="/js/main.js"></script>
-
-<script src="/tests/three.js"></script>
-{{#unless settings.production}}
+<script src="/js/ball.js"></script>
+<script src="/js/game.js"></script>
 <script src="/js/stats.min.js"></script>
 <script>
 var stats = new Stats();
@@ -43,12 +36,14 @@ stats.domElement.style.top = '0px';
 document.body.appendChild(stats.domElement);
 </script>
 {{/unless}}
+{{#if settings.isproduction}}
+<script src="/js/build/headshots-{{settings.version}}.js"></script>
+{{/if}}
 <script>
 var game = Bind({{{game}}}, {
   'me.score': '#myscore',
   'them.score': '#theirscore'
 });
 </script>
-<script src="/js/track.js"></script>
-<script src="/tests/ball.js"></script>
-<script src="/tests/game.js"></script>
+<video id="local" autoplay></video>
+<video id="remote" autoplay></video>

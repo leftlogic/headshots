@@ -396,6 +396,7 @@ video {
   transition: transform 250ms;
   position: absolute;
   z-index: 1;
+  width: 100%;
 }
 
 .pause #game-control {
@@ -434,4 +435,11 @@ video {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.notice {
+  background: #e24c3c;
+  margin: 0;
+  padding: 2rem;
+  font-size: 1.75rem;
 }

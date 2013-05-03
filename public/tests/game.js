@@ -172,6 +172,7 @@ function generateSprite() {
   var video = $('video');
 
   window.updateVideo = function () {
+    return;
     if (!video) {
       video = $('video');
     }
@@ -186,7 +187,7 @@ function generateSprite() {
           target = 40;
 
       var dim = playerDimensions.center.hit;
-      ctx.drawImage(video, x, y, narrow, narrow, dim.x, dim.y, dim.width, dim.height);
+      //ctx.drawImage(video, x, y, narrow, narrow, dim.x, dim.y, dim.width, dim.height);
     }
   };
 
@@ -198,7 +199,7 @@ function generateSprite() {
     if (event.data.raw < -75 || event.data.raw > 200) {
       i = 0;
     } else if (event.data.raw > 75) {
-      i = 2; 
+      i = 2;
     }
 
     clear();
