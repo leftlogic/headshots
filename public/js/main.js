@@ -124,7 +124,15 @@ function init() {
 
   if (PeerConnection) {
     rtc.createStream({
-      'video': {'mandatory': {}, 'optional': []},
+      'video': {'mandatory': {
+        // get the video nice and small
+        minAspectRatio: 1.333,
+        maxAspectRatio: 1.334
+      }, 'optional': [
+        {maxFrameRate: 30},
+        {maxWidth: 320},
+        {maxHeigth: 180}
+      ]},
       // 'video': false,
       'audio': false
     }, function(stream) {
@@ -209,8 +217,6 @@ bind($('#exit'), exit);
 
 var scene = $('.scene');
 
-// var 
-
 // bind($('.face'), function (event) {
 //   event.preventDefault();
 //   // next person's turn
@@ -227,6 +233,6 @@ var scene = $('.scene');
 // });
 
 
-// window.addEventListener('load', init, false);
+window.addEventListener('load', init, false);
 
 })();

@@ -363,7 +363,8 @@ input[type=submit] {
 
 video {
   position: absolute;
-  display: none;
+/*  display: none;*/
+width: 30%;
 
   top: 0;
   left: 0;
