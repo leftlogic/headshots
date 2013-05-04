@@ -90,18 +90,15 @@ function resetBall(posX, x, y, speed) {
       speed: speed
     });
   }
-  
-  posX = window.innerWidth / 2;
-  
-  var z = game.turn ? 620 : -200,
-      y = game.turn ? -180 : -95;
-      
+
+  var posZ = game.turn ? 620 : -220;
+
   if (!game.turn) {
     speed *= -1;
   }
 
-  ball.position.z = z;
-  ball.position.y = y;
+  ball.position.z = posZ;
+  ball.position.y = -95;
 
   ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
 
@@ -377,6 +374,11 @@ function loop() {
     ball.position.y = actor.floor.position.y+ballradius;
     ball.velocity.y *= -0.7;
   }
+  
+  // would like this to be a sprite
+/*  if (ball.position.z < -700) {
+    ball.velocity.z *= -0.7;
+  }*/
 
   var px = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
       py = player.position.x - ((playerDimensions.width * player.scale.x) / 2);
@@ -460,7 +462,6 @@ function init() {
   });
 
   resetBall(window.innerWidth / 2);
-  redrawAll();
 
   // setInterval(loop, 1000 / 30);
   loop();
