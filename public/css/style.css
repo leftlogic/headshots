@@ -361,17 +361,6 @@ input[type=submit] {
     display: block;
 }
 
-video {
-  position: absolute;
-/*  display: none;*/
-width: 30%;
-
-  top: 0;
-  left: 0;
-  z-index: 999999999999;
-  background: red;
-}
-
 #pause {
   font-weight: 800;
   background: rgb(160, 160, 160);
@@ -443,4 +432,21 @@ width: 30%;
   margin: 0;
   padding: 2rem;
   font-size: 1.75rem;
+}
+
+#videowrapper {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+video {
+  display: none;
+}
+
+video.streaming {
+  display: block;
+  position: absolute;
 }

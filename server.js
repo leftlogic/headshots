@@ -35,6 +35,7 @@ app.configure(function(){
   require('./lib/routes')(app);
 });
 
+// set up static handlers, but make sure this is conditional to allow for compression in production
 app.configure('production', function () {
   app.use(gzippo.staticGzip(__dirname + '/public'));
   app.set('isproduction', true);
@@ -42,62 +43,27 @@ app.configure('production', function () {
 
 app.configure('development', function () {
   app.use(express.static(__dirname + '/public'));
+
+  var fs = require('fs'),
+      options = {
+        key: fs.readFileSync('privatekey.pem'),
+        cert: fs.readFileSync('certificate.pem')
+      };
+  require('https').createServer(options, app).listen(port+1, function () {
+    var addr = this.address();
+    process.stdout.write('Up and running on https://' + addr.address + ':' + addr.port + '\n');
+  });
 });
 
 if (module.parent) {
   module.exports = server;
 } else {
   server.listen(port, function () {
-    process.stdout.write('Up and running on http://localhost:' + port + '\n');
+    var addr = this.address();
+    process.stdout.write('Up and running on http://' + addr.address + ':' + addr.port + '\n');
   });
 }
-
-
-// wss.on('connection', function(ws) {
-//   console.log('connection');
-//   parseCookie(ws.upgradeReq, null, function(err) {
-//     console.log('>>>>>>>> in!', ws.upgradeReq.cookies);
-//     var sessionID = ws.upgradeReq.cookies['connect.sid'];
-//     store.get(sessionID, function(err, session) {
-//         // session
-//       console.log([].slice.call(arguments));
-//     });
-//   });
-
-//     ws.on('message', function(message) {
-//         console.log('received: %s', message);
-//     });
-//     // ws.send('something');
-// });
 
 webRTC.rtc.on('game_msg', function(data, socket) {
   console.log(data, socket);
 });
-
-// for reference
-// webRTC.rtc.on('chat_msg', function(data, socket) {
-//   console.log('chat_msg inbound');
-//   var roomList = webRTC.rtc.rooms[data.room] || [];
-
-//   for (var i = 0; i < roomList.length; i++) {
-//     var socketId = roomList[i];
-
-//     if (socketId !== socket.id) {
-//       var soc = webRTC.rtc.getSocket(socketId);
-
-//       if (soc) {
-//         soc.send(JSON.stringify({
-//           "eventName": "receive_chat_msg",
-//           "data": {
-//             "messages": data.messages,
-//             "color": data.color
-//           }
-//         }), function(error) {
-//           if (error) {
-//             console.log(error);
-//           }
-//         });
-//       }
-//     }
-//   }
-// });

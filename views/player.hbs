@@ -9,7 +9,12 @@
 <div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
   <div class="bgmountains"></div>
   <div class="floor"></div>
-<div class="game"></div>
+<div class="game">
+<div id="videowrapper">
+  <video id="local" autoplay></video>
+  <video id="remote" autoplay></video>
+</div>
+</div>
 <div id="overlays">
   <a id="pause" href="#pause">l l</a>
   {{#unless settings.isproduction}}<span id="pin">#{{pin}}</span>{{/unless}}
@@ -45,5 +50,3 @@ var game = Bind({{{game}}}, {
   'them.score': '#theirscore'
 });
 </script>
-<video id="local" autoplay></video>
-<video id="remote" autoplay></video>

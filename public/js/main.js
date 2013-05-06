@@ -136,14 +136,7 @@ function init() {
       // 'video': false,
       'audio': false
     }, function(stream) {
-      // var video = document.createElement('video');
-      // video.id = 'you';
-      // document.body.appendChild(video);
-      // document.getElementById('you').src = URL.createObjectURL(stream);
-      // document.getElementById('you').play();
-      // videos.push(document.getElementById('you'));
       rtc.attachStream(stream, 'local');
-      // subdivideVideos();
     });
   } else {
     // TODO grab pic from the camera

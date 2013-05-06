@@ -66,6 +66,14 @@ var TO_RADIANS = Math.PI/180;
 var width = window.innerWidth,
     height = window.innerHeight;
 
+function getNarrow(a, b) {
+  return a < b ? a : b;
+}
+
+function getWide(a, b) {
+  return a > b ? a : b;
+}
+
 function redrawAll() {
   background.renderer.render(background.scene, background.camera);
   interactive.renderer.render(interactive.scene, interactive.camera);
@@ -185,12 +193,69 @@ function generateSprite() {
     }, 400);
   };
 
-  var video = $('video');
+  var videoId = '#local';
+  var video = $(videoId);
+
+  var events = 'loadstart progress suspend abort error emptied stalled play pause loadedmetadata loadeddata waiting playing canplay canplaythrough seeking seeked timeupdate ended ratechange durationchange volumechange'.split(' '),
+    i = events.length;
+
+  while (i--) {
+    video.addEventListener(events[i], echo, false);
+  }
+
+  var done = false;
+  function echo(event) {
+    if (video.videoWidth && !done) {
+      console.log('fire on ' + event.type);
+      done = true;
+      renderVideo();
+
+      i = events.length;
+      while (i--) {
+        video.removeEventListener(events[i], echo, false);
+      }
+    }
+  }
+
+  window.renderVideo = function () {
+    var parent = video.parentNode,
+        player = actor.player,
+        scale = interactive.camera.aspect,
+        playerScale = player.scale.x * scale,
+        dims = playerDimensions.center.hit,
+        target = playerDimensions.center.hit.width * playerScale,
+        w = video.videoWidth,
+        h = video.videoHeight,
+        narrow = getNarrow(w, h),
+        wide = getWide(w, h),
+        factor = narrow / target,
+        videoSize = wide / factor,
+        offset = (wide / factor - target) / 2,
+        dims = playerDimensions[actor.activePosition].hit;
+
+    var px = player.position.y + ((playerDimensions.height * (player.scale.y * scale)) / 2),
+        py = player.position.x + ((playerDimensions.width * (player.scale.x * scale)) / 2);
+
+    var x = px + (dims.x * (player.scale.x * scale));
+    var y = py + (dims.y * player.scale.y) + dims.height * (player.scale.y * scale);
+
+    video.className = 'streaming';
+    console.log(video);
+
+    // parent.style.left = x + 'px';
+    // parent.style.top = y + 'px';
+    video.height = videoSize;
+    video.width = videoSize;
+    video.style.left = -offset + 'px';
+    video.style.top = -offset + 'px';
+    parent.style.width = target + 'px';
+    parent.style.height = target + 'px';
+  };
 
   window.updateVideo = function () {
-    return;
+return;
     if (!video) {
-      video = $('video');
+      video = $(videoId);
     }
 
     if (video) {
@@ -204,6 +269,8 @@ function generateSprite() {
 
       var dim = playerDimensions.center.hit;
       //ctx.drawImage(video, x, y, narrow, narrow, dim.x, dim.y, dim.width, dim.height);
+      // video.style.left = (window.innerWidth / 2 - actor.player.position.x * actor.player.scale.x) + dim.x + 'px';
+      // video.style.top = (window.innerHeight / 2 - actor.player.position.y * actor.player.scale.y) + dim.y + 'px';
     }
   };
 
@@ -321,13 +388,13 @@ function debug() {
       p.position.z = actor.player.position.z;
       p.scale.x = player.width;
       p.scale.y = player.height;
-  
+
       b.position.x = ball.x + ball.width / 2;
       b.position.y = ball.y + ball.height / 2;
       b.position.z = actor.ball.position.z;
       b.scale.x = ball.width;
       b.scale.y = ball.height;
-  
+
       h.position.x = hit.x + hit.width / 2;
       h.position.y = hit.y + hit.height / 2;
       h.position.z = actor.player.position.z;
@@ -485,6 +552,7 @@ window.addEventListener('resize', function () {
   background.camera.updateProjectionMatrix();
   background.renderer.setSize(w, h);
   redrawAll();
+  renderVideo();
 }, false /*yeah, like I need this, but heck, I'm a stickler for habits*/);
 
 document.body.addEventListener('touchmove', function (e) {
