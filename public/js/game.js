@@ -1,6 +1,8 @@
 /*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true*/
 "use strict";
 
+var running = false;
+
 var interactive = {
   camera: null,
   scene: null,
@@ -90,6 +92,29 @@ function resetBall(posX, x, y, speed) {
   if (!speed) {speed = 0;}
   var ball = actor.ball;
 
+  var throwBall = function () {
+    var posZ = game.turn ? 620 : -220;
+
+    if (!game.turn) {
+      speed *= -1;
+    }
+
+    ball.position.z = posZ;
+    ball.position.y = -95;
+
+    ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
+
+
+    ball.velocity.set(0, 0, -speed * 0.35);
+
+    ball.velocity.rotateY(x);
+    ball.velocity.rotateZ(0);
+    ball.velocity.rotateX(y * 80);
+  };
+
+  // TODO discover timeout based on a ping test
+  var delay = 250;
+
   if (game.turn === true) {
     $.trigger('throw', {
       posX: posX,
@@ -97,25 +122,10 @@ function resetBall(posX, x, y, speed) {
       y: y,
       speed: speed
     });
+    throwBall();
+  } else {
+    setTimeout(throwBall, delay);
   }
-
-  var posZ = game.turn ? 620 : -220;
-
-  if (!game.turn) {
-    speed *= -1;
-  }
-
-  ball.position.z = posZ;
-  ball.position.y = -95;
-
-  ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
-
-
-  ball.velocity.set(0, 0, -speed * 0.35);
-
-  ball.velocity.rotateY(x);
-  ball.velocity.rotateZ(0);
-  ball.velocity.rotateX(y * 80);
 }
 
 function getContainer(c) {
@@ -500,6 +510,10 @@ function isObjectInTarget(rect1, rect2) {
 function loop() {
   requestAnimationFrame(loop);
 
+  if (!running) {
+    return;
+  }
+
   var ball = actor.ball,
       player = actor.player,
       b = {}, p = {}, h = {},
@@ -607,18 +621,27 @@ function initGame() {
   var player = actor.player = getPlayer(interactive.scene);
   scene.add(player);
 
-  var track = new Track(document.body);
+  var track = new Track(document.body),
+      waitforup = false;
 
+  track.down = function (event) {
+    waitforup = true;
+    console.log('down', event.type);
+  };
   track.up = function (event) {
-    var x = track.x - track.momentumX;
-    var y = (track.upY - track.downY) - track.momentumY;
+    console.log('up', event.type);
+    if (waitforup) {
+      var x = track.x - track.momentumX;
+      var y = (track.upY - track.downY) - track.momentumY;
 
-    //if (game.turn === true) {
-      resetBall(track.downX, track.momentumX, y / window.height, track.duration);
-    //}
+      //if (game.turn === true) {
+        resetBall(track.downX, track.momentumX, y / window.height, track.duration);
+      //}
+    }
+    waitforup = false;
   };
 
-  $.on('throw', function (event) {
+  $.on('remoteThrow', function (event) {
     if (game.turn === false) {
       resetBall(event.data.posX, event.data.x, event.data.y, event.data.speed);
     }
@@ -627,6 +650,7 @@ function initGame() {
   resetBall(window.innerWidth / 2);
 
   // setInterval(loop, 1000 / 30);
+  running = true;
   loop();
 }
 

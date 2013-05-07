@@ -54,6 +54,8 @@ app.configure('production', function () {
 app.configure('development', function () {
   app.use(express.static(__dirname + '/public'));
 
+  app.set('version', Date.now());
+
   var fs = require('fs'),
       options = {
         key: fs.readFileSync('privatekey.pem'),

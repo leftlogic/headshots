@@ -21,13 +21,6 @@
     </div>
   </form>
 </div>
-<div id="game-control" class="panel">
-  <h2>Are you sure you want to exit the&nbsp;game?</h2>
-  <div class="buttons">
-    <button id="resume" class="button resume">Resume</button>
-    <button id="exit" class="button exit">Exit</button>
-  </div>
-</div>
 <div id="playing" class="panel">
   <div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
     <div class="bgmountains"></div>
@@ -42,6 +35,13 @@
     <a id="pause" href="#pause">l l</a>
     <span class="pincode">#{{pin}}</span>
     <span id="myscore">0</span>
+  </div>
+</div>
+<div id="game-control" class="panel">
+  <h2>Are you sure you want to exit the&nbsp;game?</h2>
+  <div class="buttons">
+    <button id="resume" class="button resume">Resume</button>
+    <button id="exit" class="button exit">Exit</button>
   </div>
 </div>
 <script>

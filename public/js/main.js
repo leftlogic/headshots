@@ -90,14 +90,21 @@ function initSocket() {
     }));
   }, 100), false);
 
-  $.on('throw', function (event) {
+  $.on('pause', function () {
+    socket.send(JSON.stringify({eventName: 'pause'}));
+  }).on('resume', function () {
+    socket.send(JSON.stringify({eventName: 'resume'}));
+  }).on('throw', function () {
     if (game.turn === true) {
       socket.send(JSON.stringify({
         eventName: 'throw',
         data: event.data
       }));
     }
+  }).on('hit', function () {
+
   });
+
 
   var player = $('.player'),
       positionStates = {
@@ -106,16 +113,10 @@ function initSocket() {
         '1': 'right'
       };
 
-  rtc.on(socket.event, function() {
-    var data = socket.recv.apply(this, arguments);
-    // if (data.type === 'orientation') {
-      // player.className = 'player ' + positionStates[data.gamma];
-      $.trigger('orientation', data);
-    // }
-
-    // if (video) {
-    //   document.body.style.webkitTransform = 'rotate(' + data.gamma + 'deg)';
-    // }
+  rtc.on(socket.event, function(rtc, msg) {
+    msg = JSON.parse(msg);
+    var type = 'remote' + msg.eventName.replace(/(^.)/, function (all, m) { return m.toUpperCase() + all.substr(1); });
+    $.trigger(type, msg.data);
   });
 }
 
@@ -125,6 +126,7 @@ window.initConnection = function () {
 };
 
 function init() {
+  console.log('connection established');
   if (PeerConnection) {
     rtc.createStream({
       'video': {'mandatory': {
@@ -149,28 +151,6 @@ function init() {
 
   rtc.on('add remote stream', function(stream, socketId) {
     console.log("ADDING REMOTE STREAM...");
-    // var clone = cloneVideo('you', socketId);
-    // window.video = video = document.createElement('video');
-    // document.body.appendChild(video);
-    // // rtc.attachStream(stream, video);
-    // video.src = window.URL.createObjectURL(stream);
-    // video.autoplay = true;
-    // video.id = 'remote' + socketId;
-    // video.play();
-
-    // console.log(video.readyState);
-
-    // if (video.readyState === 4) {
-    //   renderVideo(video);
-    // } else {
-    //   video.addEventListener('canplay', function () {
-    //     console.log('ready');
-    //     renderVideo(video);
-    //   });
-    // }
-
-    // rtc.attachStream(stream, video);
-    console.log('adding remote');
     rtc.attachStream(stream, 'remote');
   });
   rtc.on('disconnect stream', function(socketId) {
@@ -194,24 +174,31 @@ function bind(el, handler) {
 
 function pause(event) {
   event.preventDefault();
-  document.body.className = 'pause';
+  window.running = false;
+  if (event.type.indexOf('remote') !== 0) $.trigger('pause');
+  control.classList.add('show');
 }
 
 function resume(event) {
   event.preventDefault();
-  document.body.className = '';
+  window.running = true;
+  if (event.type.indexOf('remote') !== 0) $.trigger('resume');
+  control.classList.remove('show');
 }
 
 function exit(event) {
   event.preventDefault();
-  document.body.className = '';
-  // send xhr event
   window.location = '/';
 }
+
+var control = $('#game-control');
 
 bind($('#pause'), pause);
 bind($('#resume'), resume);
 bind($('#exit'), exit);
+
+$.on('remotePause', pause);
+$.on('remoteResume', resume);
 
 var scene = $('.scene');
 

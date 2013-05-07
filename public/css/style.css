@@ -378,7 +378,7 @@ input[type=submit] {
 }
 
 .panel {
-  background: #2C3E50;
+  background: rgba(44, 62, 80, 0.37);
   height: 100%;
   top: -100%;
   -webkit-transition: -webkit-transform 250ms;
