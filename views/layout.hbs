@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html id="headshots"{{#if wide}} class="wide"{{/if}}>
 <head>
-  <meta charset=utf-8 />
+  <meta charset=utf-8>
 <!--
 
                    __    __   _______     ___       _______
@@ -29,10 +29,9 @@ Built by @leftlogic aka @rem
   <meta name="viewport" content="width=400">
   <link href='//fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/css/style.css">
-  {{#if settings.isproduction}}
-  <link rel="subresource" href="/js/build/headshots-{{settings.version}}.js">
-  <link rel="prefetch" href="/images/mountains.png">
-  {{/if}}
+  {{#if settings.isproduction}}{{#unless wide}}
+  <link rel="prerender" href="/play">
+  {{/unless}}{{/if}}
 </head>
 <body>
   {{{body}}}

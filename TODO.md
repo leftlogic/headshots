@@ -15,4 +15,6 @@
 - BUG: both players are turn:false
 - Send throw messages
 - Send hit message
-- 
+- Update to use .min.js
+- Leaning needs to be inverted
+- Hide screen on landscape
