@@ -19,12 +19,22 @@ app.configure(function(){
 
   app.set('version', pkg.version);
 
-  // load hbs helpers
-  require ('./views/helpers.js');
-
   app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
+
+  // this is a hand rolled change that parses each body prop
+  // because we're expecting all content that's posted to be
+  // in JSON format
+  // app.use(function (req, res, next) {
+  //   if (req.body) {
+  //     Object.keys(req.body).forEach(function (key) {
+  //       req.body[key] = JSON.parse(req.body[key]);
+  //     });
+  //   }
+  //   next();
+  // });
+
 
   app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
   app.use(express.session({ store: store, secret: 'spa6kugo3chi4rti8wajy1no5ku' }));

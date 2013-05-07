@@ -29,6 +29,10 @@ Built by @leftlogic aka @rem
   <meta name="viewport" content="width=400">
   <link href='//fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/css/style.css">
+  {{#if settings.isproduction}}
+  <link rel="subresource" href="/js/build/headshots-{{settings.version}}.js">
+  <link rel="prefetch" href="/images/mountains.png">
+  {{/if}}
 </head>
 <body>
   {{{body}}}

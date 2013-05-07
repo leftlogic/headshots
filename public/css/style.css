@@ -377,7 +377,7 @@ input[type=submit] {
   text-align: center;
 }
 
-#game-control {
+.panel {
   background: #2C3E50;
   height: 100%;
   top: -100%;
@@ -389,7 +389,7 @@ input[type=submit] {
   width: 100%;
 }
 
-.pause #game-control {
+.panel.show {
   -webkit-transform: translateY(100%);
   -moz-transform: translateY(100%);
   transform: translateY(100%);
@@ -435,18 +435,35 @@ input[type=submit] {
 }
 
 #videowrapper {
-  overflow: hidden;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  z-index: 1000000000;
+  /*overflow: hidden;*/
 }
 
 video {
-  display: none;
+  /*display: none;*/
+  width: 20%;
 }
 
 video.streaming {
   display: block;
+  /*position: absolute;*/
+}
+
+#stats {
+  z-index: 9;
+}
+
+#overlays .pincode {
   position: absolute;
+  bottom: .1rem;
+  left: .1rem;
+}
+
+#overlays .pincode:before {
+  content: '#';
 }

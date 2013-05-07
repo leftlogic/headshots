@@ -1,6 +1,8 @@
+var xhr = (function () {
+
 function request(type, url, opts, callback) {
   var xhr = new XMLHttpRequest(),
-      fd;
+      pd;
 
   if (typeof opts === 'function') {
     callback = opts;
@@ -10,14 +12,12 @@ function request(type, url, opts, callback) {
   xhr.open(type, url);
 
   if (type === 'POST' && opts) {
-    fd = new FormData();
+    pd = JSON.stringify(opts);
 
-    for (var key in opts) {
-      fd.append(key, JSON.stringify(opts[key]));
-    }
+    xhr.setRequestHeader('Content-Type', 'application/json');
   }
 
-  xhr.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
   xhr.onload = function () {
     callback.call(xhr, null, JSON.parse(xhr.response));
@@ -27,10 +27,17 @@ function request(type, url, opts, callback) {
     callback.call(xhr, true);
   };
 
-  xhr.send(opts ? fd : null);
+  xhr.send(opts ? pd : null);
 
   return xhr;
 }
 
 var get = request.bind(this, 'GET');
 var post = request.bind(this, 'POST');
+
+return {
+  get: get,
+  post: post
+}
+
+})();

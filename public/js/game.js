@@ -155,6 +155,83 @@ function getCamera() {
   return camera;
 }
 
+function px(x) { 
+  return Math.round(x) + "px"; 
+}
+
+function positionVideo(parent, video) {
+  // now position the wrapping div
+  // Canvas size
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+  var w2 = w / 2;
+  var h2 = h / 2;
+
+  // Project 4 corners
+  var projector = new THREE.Projector();
+
+  // Coordinates relative to object center in object-space
+  // (These numbers are obviously wrong)
+  var dim = playerDimensions[actor.activePosition].hit;
+  var corners = [
+    [dim.x, dim.y], // upper left
+    [dim.x + dim.width, dim.y + dim.height] // bottom right
+  ];
+
+  var corners = [
+    [-30, -30],
+    [30, 30]
+  ];
+
+  // Project corners into screen space
+  var screenCorners = [];
+  corners.forEach(function (corner) {
+    var v = new THREE.Vector3(corner[0], corner[1]);
+    v.applyMatrix4(actor.player.matrixWorld);
+    projector.projectVector(v, interactive.camera);
+
+    screenCorners.push(v);
+  });
+
+  // Apply coordinates to video
+  // Note: screen space is usually mapped to -1..1 in Y and -a..a in X where a = aspect ratio
+  // (This part is broken, I tried to figure it out and then the page stopped working)
+  var videoWrapperStyle = parent.style;
+  var videoStyle = video.style;
+
+  videoWrapperStyle.left = px(w2 + h2 * screenCorners[0].x); // h2 is not a typo
+  videoWrapperStyle.top = px(h2 + h2 * screenCorners[0].y);
+
+  var width = h2 * (screenCorners[1].x - screenCorners[0].x),
+      height = h2 * (screenCorners[1].y - screenCorners[0].y);
+
+  // set the width of the wrapper to the perfect size of the square
+  // but then offset the video either left or top depending on orientaion
+  // to create a square video effect
+  // var narrow = getNarrow(width, height);
+  // var wide = getWide(width, height);
+
+  // videoWrapperStyle.width = px(narrow);
+  // videoWrapperStyle.height = px(narrow);
+
+  // console.log(px(narrow));
+
+  // var offset = (wide - narrow) / 2;
+
+  // videoStyle.width = px(wide);
+  // videoStyle.height = px(wide);
+  // videoStyle.left = px(-offset);
+  // videoStyle.top = px(-offset);
+
+  //*
+  videoWrapperStyle.left = px(w2 + h2 * screenCorners[0].x); // h2 is not a typo
+  videoWrapperStyle.top = px(h2 + h2 * screenCorners[0].y);
+
+  videoStyle.width = px(h2 * (screenCorners[1].x - screenCorners[0].x));
+  videoStyle.height = px(h2 * (screenCorners[1].y - screenCorners[0].y));
+  //*/
+}
+
 function generateSprite() {
   var canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
@@ -193,7 +270,7 @@ function generateSprite() {
     }, 400);
   };
 
-  var videoId = '#local';
+  var videoId = '#remote';
   var video = $(videoId);
 
   var events = 'loadstart progress suspend abort error emptied stalled play pause loadedmetadata loadeddata waiting playing canplay canplaythrough seeking seeked timeupdate ended ratechange durationchange volumechange'.split(' '),
@@ -218,6 +295,8 @@ function generateSprite() {
   }
 
   window.renderVideo = function () {
+    video.className = 'streaming';
+    return;
     var parent = video.parentNode,
         player = actor.player,
         scale = interactive.camera.aspect,
@@ -233,23 +312,17 @@ function generateSprite() {
         offset = (wide / factor - target) / 2,
         dims = playerDimensions[actor.activePosition].hit;
 
-    var px = player.position.y + ((playerDimensions.height * (player.scale.y * scale)) / 2),
-        py = player.position.x + ((playerDimensions.width * (player.scale.x * scale)) / 2);
-
-    var x = px + (dims.x * (player.scale.x * scale));
-    var y = py + (dims.y * player.scale.y) + dims.height * (player.scale.y * scale);
-
-    video.className = 'streaming';
-    console.log(video);
 
     // parent.style.left = x + 'px';
     // parent.style.top = y + 'px';
     video.height = videoSize;
     video.width = videoSize;
-    video.style.left = -offset + 'px';
-    video.style.top = -offset + 'px';
-    parent.style.width = target + 'px';
-    parent.style.height = target + 'px';
+    // video.style.left = -offset + 'px';
+    // video.style.top = -offset + 'px';
+    // parent.style.width = target + 'px';
+    // parent.style.height = target + 'px';
+
+    positionVideo(parent, video);
   };
 
   window.updateVideo = function () {
@@ -498,7 +571,30 @@ function loop() {
 }
 
 
-function init() {
+function initGame() {
+  $('.panel').forEach(function (el) {
+    el.classList.remove('show');
+  });
+
+  $('#playing').classList.add('show');
+
+  window.addEventListener('resize', function () {
+    var w = window.innerWidth,
+        h = window.innerHeight;
+    interactive.camera.aspect = w / h;
+    interactive.camera.updateProjectionMatrix();
+    interactive.renderer.setSize(w, h);
+    background.camera.aspect = w / h;
+    background.camera.updateProjectionMatrix();
+    background.renderer.setSize(w, h);
+    redrawAll();
+    renderVideo();
+  }, false /*yeah, like I need this, but heck, I'm a stickler for habits*/);
+
+  document.body.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+  });
+
   buildStaticObjects();
   var scene = interactive.scene = createInteractiveScene();
 
@@ -539,22 +635,3 @@ function init() {
 function randomRange(min, max){
   return ((Math.random()*(max-min)) + min);
 }
-
-window.addEventListener('load', init, false);
-
-window.addEventListener('resize', function () {
-  var w = window.innerWidth,
-      h = window.innerHeight;
-  interactive.camera.aspect = w / h;
-  interactive.camera.updateProjectionMatrix();
-  interactive.renderer.setSize(w, h);
-  background.camera.aspect = w / h;
-  background.camera.updateProjectionMatrix();
-  background.renderer.setSize(w, h);
-  redrawAll();
-  renderVideo();
-}, false /*yeah, like I need this, but heck, I'm a stickler for habits*/);
-
-document.body.addEventListener('touchmove', function (e) {
-  e.preventDefault();
-});

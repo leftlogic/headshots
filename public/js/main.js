@@ -119,9 +119,12 @@ function initSocket() {
   });
 }
 
-function init() {
-  rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
+window.initConnection = function () {
+  rtc.on('connect', init);
+  rtc.connect((window.location.protocol.indexOf('https') !== -1 ? 'wss:' : 'ws:') + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
+};
 
+function init() {
   if (PeerConnection) {
     rtc.createStream({
       'video': {'mandatory': {
@@ -136,7 +139,8 @@ function init() {
       // 'video': false,
       'audio': false
     }, function(stream) {
-      rtc.attachStream(stream, 'local');
+      // console.log('attached local stream');
+      // rtc.attachStream(stream, 'local');
     });
   } else {
     // TODO grab pic from the camera
@@ -166,6 +170,7 @@ function init() {
     // }
 
     // rtc.attachStream(stream, video);
+    console.log('adding remote');
     rtc.attachStream(stream, 'remote');
   });
   rtc.on('disconnect stream', function(socketId) {
@@ -225,7 +230,5 @@ var scene = $('.scene');
 //   }
 // });
 
-
-window.addEventListener('load', init, false);
 
 })();

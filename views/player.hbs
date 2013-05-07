@@ -1,24 +1,48 @@
-<div id="game-control">
+<div id="start" class="panel">
+  <h2>Waiting for player to join</h2>
+
+  <div class="pin">
+    <div class="info">
+      <small>PIN code</small>
+      <p class="pincode">&hellip;</p>
+    </div>
+    <div class="streak"></div>
+  </div>
+</div>
+<div id="join" class="panel">
+  {{#if message}}
+  <h2 class="notice">{{message}}</h2>
+  {{/if}}
+  <form action="#" method="post">
+    <h2><label for="code">Enter PIN to join a game</label></h2>
+    <input class="field" type="number" id="userpin" pattern="[0-9]{4}" placeholder="eg. 1234" name="pin" required>
+    <div class="pin">
+      <input class="button start" type="submit" id="joingame" value="Go!">
+    </div>
+  </form>
+</div>
+<div id="game-control" class="panel">
   <h2>Are you sure you want to exit the&nbsp;game?</h2>
   <div class="buttons">
     <button id="resume" class="button resume">Resume</button>
     <button id="exit" class="button exit">Exit</button>
   </div>
-
 </div>
-<div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
-  <div class="bgmountains"></div>
-  <div class="floor"></div>
-<div class="game">
-<div id="videowrapper">
-  <video id="local" autoplay></video>
-  <video id="remote" autoplay></video>
-</div>
-</div>
-<div id="overlays">
-  <a id="pause" href="#pause">l l</a>
-  {{#unless settings.isproduction}}<span id="pin">#{{pin}}</span>{{/unless}}
-  <span id="myscore">0</span>
+<div id="playing" class="panel">
+  <div class="player-{{player.letter}}{{#if player.turn}} player-{{player.letter}}-turn{{/if}} scene">
+    <div class="bgmountains"></div>
+    <div class="floor"></div>
+  <div class="game">
+  <div id="videowrapper">
+    <video id="local" autoplay></video>
+    <video id="remote" autoplay></video>
+  </div>
+  </div>
+  <div id="overlays">
+    <a id="pause" href="#pause">l l</a>
+    {{#unless settings.isproduction}}<span class="pincode">#{{pin}}</span>{{/unless}}
+    <span id="myscore">0</span>
+  </div>
 </div>
 <script>
 var pin = {{pin}};
@@ -33,6 +57,7 @@ var pin = {{pin}};
 <script src="/js/main.js"></script>
 <script src="/js/ball.js"></script>
 <script src="/js/game.js"></script>
+<script src="/js/start.js"></script>
 <script src="/js/stats.min.js"></script>
 <script>
 var stats = new Stats();
@@ -44,9 +69,3 @@ document.body.appendChild(stats.domElement);
 {{#if settings.isproduction}}
 <script src="/js/build/headshots-{{settings.version}}.js"></script>
 {{/if}}
-<script>
-var game = Bind({{{game}}}, {
-  'me.score': '#myscore',
-  'them.score': '#theirscore'
-});
-</script>
