@@ -44,11 +44,11 @@ function setupSocket() {
 
   var lastOrientation = null;
   window.addEventListener('deviceorientation', utils.throttle(function (event) {
-    var i = 0;
-    if (event.gamma < -75) {//} || event.gamma > 200) {
-      i = 2;
+    var i = 1;
+    if (event.gamma < -75 || event.gamma > 200) {
+      i = 0;
     } else if (event.gamma > 75) {
-      i = 1;
+      i = 2;
     }
 
     if (lastOrientation !== i) {

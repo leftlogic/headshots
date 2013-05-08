@@ -1,4 +1,4 @@
-/*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true, utils:true, debug:true*/
+/*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true, utils:true, debug:true, xhr:true*/
 "use strict";
 
 var running = false;
@@ -104,6 +104,10 @@ function resetBall(posX, x, y, speed) {
   var ball = actor.ball;
 
   var throwBall = function () {
+    if (game.turn || speed) {
+      interactive.scene.add(actor.ball);
+    }
+
     var posZ = game.turn ? 620 : -220;
 
     if (!game.turn) {
@@ -193,6 +197,8 @@ function getRect2DForRect3D(positionVector, width3d, height3d, camera, canvas) {
   var topleft2d = projector.projectVector( topleft3d.clone(), camera );
   var dimensions2d = projector.projectVector( dimensions3d.clone(), camera );
 
+  // this code used to use canvas.width & height, but for reasons that are utterly beyond 
+  // me, this breaks on mobile, so I changed it to window.innerWidth, and it works. Genius.
   var w = window.innerWidth,
       h = window.innerHeight;
 
@@ -247,14 +253,10 @@ function generateSprite() {
 
   window.hit = function () {
     if (game.turn) {
-      var wide = getWide(video.videoWidth, video.videoHeight); //video.width, video.height);
-      var narrow = getNarrow(video.videoWidth, video.videoHeight);
-
-      var offset = (wide - narrow) / 2;
-
+      xhr.get('/hit');
+      game.me.score++;
       $.trigger('hit');
-      console.log('HITTTTTT!');
-      $.trigger('hit');
+
       clearTimeout(timer);
       clear();
       video.className = '';
@@ -303,15 +305,20 @@ function generateSprite() {
     // now position
     var parent = video.parentNode;
 
+
+    // serious no idea why I can't reuse .y & .height, it makes my brain hurt
+    // but it turns out if you just mix around the values, then it just
+    // *suddenly* works. ::sign::
+
     parent.style.left = px(coords.x);
     parent.style.top = px(coords.y - coords.width + 2);
     parent.style.width = px(coords.width);
     parent.style.height = px(coords.width);
 
-    var wide = getWide(video.videoWidth, video.videoHeight); //video.width, video.height);
+    var wide = getWide(video.videoWidth, video.videoHeight);
     var narrow = getNarrow(video.videoWidth, video.videoHeight);
     var factor = coords.width / narrow;
-    // console.log(wide, video.videoWidth, video.videoHeight);
+
     video.width = wide * factor;
     video.height = wide * factor;
 
@@ -344,16 +351,10 @@ function generateSprite() {
   var types = 'left center right'.split(' ');
 
   $.on('remoteOrientation', function (event) {
-    var i = 1;
-    if (event.data.raw < -75 || event.data.raw > 200) {
-      i = 2;
-    } else if (event.data.raw > 75) {
-      i = 1;
-    }
-
     clear();
-    ctx.drawImage(positions[types[i]], 0, 0);
-    actor.activePosition = types[i];
+    ctx.drawImage(positions[types[event.data.position]], 0, 0);
+    actor.activePosition = types[event.data.position];
+    redrawAll();
   });
 
   return canvas;
@@ -538,8 +539,8 @@ function loop() {
   }
 
   // only render whilst the ball is moving
-  if (true || Math.abs(ball.velocity.z) > 0.1) {
-    interactive.debug.update(p, b, h);
+  if (Math.abs(ball.velocity.z) > 0.1) {
+    // interactive.debug.update(p, b, h);
     interactive.renderer.render(interactive.scene, interactive.camera);
   }
 
@@ -580,11 +581,11 @@ function initGame() {
   var ball = actor.ball = new Ball(0.15);
   ball.drag = 0.985;
 
-  scene.add(ball);
-  resetBall();
 
   var player = actor.player = getPlayer(interactive.scene);
   scene.add(player);
+
+  resetBall();
 
   var track = new Track(document.body),
       waitforup = false;
@@ -608,13 +609,20 @@ function initGame() {
 
   $.on('remoteThrow', function (event) {
     if (game.turn === false) {
+      game.turns--;
       resetBall(event.data.posX, event.data.x, event.data.y, event.data.speed);
+    }
+  });
+
+  $.on('remoteHit', function () {
+    if (game.turn === false && game.turns) {
+      game.them.score++;
     }
   });
 
   resetBall(window.innerWidth / 2);
 
-  setupDebug();
+  // setupDebug();
 
   // setInterval(loop, 1000 / 30);
   running = true;

@@ -1,5 +1,7 @@
 var xhr = (function () {
 
+var noop = function () {};
+
 function request(type, url, opts, callback) {
   var xhr = new XMLHttpRequest(),
       pd;
@@ -7,6 +9,10 @@ function request(type, url, opts, callback) {
   if (typeof opts === 'function') {
     callback = opts;
     opts = null;
+  }
+
+  if (!callback) {
+    callback = noop;
   }
 
   xhr.open(type, url);
@@ -38,6 +44,6 @@ var post = request.bind(this, 'POST');
 return {
   get: get,
   post: post
-}
+};
 
 })();
