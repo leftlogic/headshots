@@ -1,15 +1,17 @@
 # TODO
 
+- Don't connect to gum until you have a pin
+- BUG: user can join same game twice to trigger it
+- Reconnect WebRTC if pin changes
+- Send hit message
 - Scoring
 - Hit and swap go
 - Exit game from any screen
-- Send hit message
 - Update to use .min.js
 - Leaning needs to be inverted
 - Hide screen on landscape
 - If player leaves game for long enough, game disconnects
-- Don't connect to gum until you have a pin
-- Reconnect WebRTC if pin changes
+- If player hits root (/) then exit any game they were in
 - Game over page
 - Tilting is at a weird angle
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)

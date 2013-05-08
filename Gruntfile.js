@@ -4,7 +4,7 @@ module.exports = function (grunt) {
       isjs = /\.js$/;
 
   // I hate that this ordering is hard to automate. JS Bin has it right, but meh, this is a small project
-  var sourceScripts = ['webrtc.io.js', 'min.js', 'bind.js', 'xhr.js', 'track.js', 'three.js', 'main.js', 'ball.js', 'game.js', 'start.js'];
+  var sourceScripts = ['webrtc.io.js', 'min.js', 'utils.js', 'bind.js', 'xhr.js', 'track.js', 'three.js', 'main.js', 'ball.js', 'game.js', 'start.js'];
 
   var scripts = sourceScripts.filter(function (file) {
     return isjs.test(file);

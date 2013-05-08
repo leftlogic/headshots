@@ -1,4 +1,4 @@
-/*global rtc:true, alert:true, pin:true, get:true, game:true, $:true*/
+/*global rtc:true, alert:true, pin:true, get:true, game:true, $:true, utils:true*/
 "use strict";
 
 (function () {
@@ -7,40 +7,6 @@ var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
 
 var video = null;
-
-function throttle(fn, threshhold, scope) {
-  threshhold || (threshhold = 250);
-  var last,
-      deferTimer;
-  return function () {
-    var context = scope || this;
-
-    var now = +new Date(),
-        args = arguments;
-    if (last && now < last + threshhold) {
-      // hold on to it
-      clearTimeout(deferTimer);
-      deferTimer = setTimeout(function () {
-        last = now;
-        fn.apply(context, args);
-      }, threshhold);
-    } else {
-      last = now;
-      fn.apply(context, args);
-    }
-  };
-}
-
-function map(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
-function removeVideo(socketId) {
-  var video = document.getElementById('remote' + socketId);
-  if (video) {
-    video.parentNode.removeChild(video);
-  }
-}
 
 var websocket = {
   send: function(message) {
@@ -65,22 +31,22 @@ var dataChannel = {
   event: 'data stream data'
 };
 
-function initSocket() {
+function setupSocket() {
   var socket;
 
   if(rtc.dataChannelSupport) {
     console.log('initializing data channel');
     socket = dataChannel;
   } else {
-    console.log('initializing websocket :(');
+    console.log('initializing websocket');
     socket = websocket;
   }
 
-  window.addEventListener('deviceorientation', throttle(function (event) {
-    var g = map(event.gamma, -50, 50, -1, 1) | 0;
+  window.addEventListener('deviceorientation', utils.throttle(function (event) {
+    var g = utils.map(event.gamma, -50, 50, -1, 1) | 0;
     // var g = event.gamma | 0;
     socket.send(JSON.stringify({
-      eventName: 'orientation_msg',
+      eventName: 'orientation',
       data: {
         // type: 'orientation',
         gamma: g,
@@ -90,47 +56,38 @@ function initSocket() {
     }));
   }, 100), false);
 
+  var eventIfTurn = function (event) {
+    if (game.turn === true) {
+      socket.send(JSON.stringify({
+        eventName: event.type,
+        data: event.data
+      }));
+    }
+  };
+
   $.on('pause', function () {
     socket.send(JSON.stringify({eventName: 'pause'}));
   }).on('resume', function () {
     socket.send(JSON.stringify({eventName: 'resume'}));
-  }).on('throw', function () {
-    if (game.turn === true) {
-      socket.send(JSON.stringify({
-        eventName: 'throw',
-        data: event.data
-      }));
-    }
-  }).on('hit', function () {
-
   });
 
+  $.on('throw', eventIfTurn).on('hit', eventIfTurn);
 
-  var player = $('.player'),
-      positionStates = {
-        '-1': 'left',
-        '0': 'center',
-        '1': 'right'
-      };
-
+  // when receiving events, convert them to remote{EventName} to distinguish in our code
+  var re = /(^.)/;
   rtc.on(socket.event, function(rtc, msg) {
     msg = JSON.parse(msg);
-    var type = 'remote' + msg.eventName.replace(/(^.)/, function (all, m) { return m.toUpperCase() + all.substr(1); });
+    var type = 'remote' + msg.eventName.replace(re, function (all, m) { return m.toUpperCase() + all.substr(1); });
     $.trigger(type, msg.data);
   });
 }
 
-window.initConnection = function () {
-  rtc.on('connect', init);
-  rtc.connect((window.location.protocol.indexOf('https') !== -1 ? 'wss:' : 'ws:') + window.location.href.substring(window.location.protocol.length).split('#')[0], pin);
-};
-
-function init() {
+function connectVideo() {
   console.log('connection established');
   if (PeerConnection) {
     rtc.createStream({
       'video': {'mandatory': {
-        // get the video nice and small
+        // **attempt** to get the video nice and small (noticing this totally doesn't work)
         minAspectRatio: 1.333,
         maxAspectRatio: 1.334,
         maxWidth: 320,
@@ -140,84 +97,42 @@ function init() {
         {maxWidth: 320},
         {maxHeight: 180}
       ]},
-      // 'video': false,
       'audio': false
     }, function(stream) {
-      // console.log('attached local stream');
+      console.log('local video streaming');
       // rtc.attachStream(stream, 'local');
     });
   } else {
     // TODO grab pic from the camera
     alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
   }
+}
 
+window.initConnection = function () {
   rtc.on('add remote stream', function(stream, socketId) {
-    console.log("ADDING REMOTE STREAM...");
+    console.log('adding remote stream');
     rtc.attachStream(stream, 'remote');
   });
   rtc.on('disconnect stream', function(socketId) {
-    console.log('remove ' + socketId);
-
-    // 1. remove old canvas
-    // 2. cancel timer (based on id on video)
-    // 3. remove video element
-
+    console.log('remove stream ' + socketId);
     var video = document.getElementById('remote' + socketId);
-    if (video) video.parentNode.removeChild(video);
+    if (video) { video.parentNode.removeChild(video); }
   });
 
-  initSocket();
-}
+  setupSocket();
+};
 
-function bind(el, handler) {
-  el.addEventListener('touchstart', handler, false);
-  el.addEventListener('click', handler, false);
-}
+rtc.on('connect', connectVideo);
 
-function pause(event) {
-  event.preventDefault();
-  window.running = false;
-  if (event.type.indexOf('remote') !== 0) $.trigger('pause');
-  control.classList.add('show');
-}
+$.on('pinchange', function () {
+  var proto = window.location.protocol,
+      href = window.location.href;
 
-function resume(event) {
-  event.preventDefault();
-  window.running = true;
-  if (event.type.indexOf('remote') !== 0) $.trigger('resume');
-  control.classList.remove('show');
-}
+  try {
+    rtc._socket.close();
+  } catch (e) {}
 
-function exit(event) {
-  event.preventDefault();
-  window.location = '/';
-}
-
-var control = $('#game-control');
-
-bind($('#pause'), pause);
-bind($('#resume'), resume);
-bind($('#exit'), exit);
-
-$.on('remotePause', pause);
-$.on('remoteResume', resume);
-
-var scene = $('.scene');
-
-// bind($('.face'), function (event) {
-//   event.preventDefault();
-//   // next person's turn
-//   if (game.turn) {
-//     get('/hit', function (success) {
-//       if (success) {
-//         game.me.score++;
-//       }
-
-//       game.turn = false;
-//       game.currentPlayer = game.them.letter;
-//     });
-//   }
-// });
-
+  rtc.connect((proto.indexOf('https') !== -1 ? 'wss:' : 'ws:') + href.substring(proto.length).split('#')[0], pin);
+});
 
 })();

@@ -1,4 +1,4 @@
-/*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true*/
+/*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true, utils:true*/
 "use strict";
 
 var running = false;
@@ -82,10 +82,6 @@ function redrawAll() {
   interactive.renderer.render(interactive.scene, interactive.camera);
 }
 
-function map(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
 function resetBall(posX, x, y, speed) {
   if (!posX) {posX = 0;}
   if (!x) {x = 0;}
@@ -103,7 +99,7 @@ function resetBall(posX, x, y, speed) {
     ball.position.z = posZ;
     ball.position.y = -95;
 
-    ball.position.x = map(posX, 0, window.innerWidth, -100, 100);
+    ball.position.x = utils.map(posX, 0, window.innerWidth, -100, 100);
 
 
     ball.velocity.set(0, 0, -speed * 0.35);
@@ -166,7 +162,7 @@ function getCamera() {
   return camera;
 }
 
-function px(x) { 
+function px(x) {
   return Math.round(x) + "px";
 }
 
@@ -219,15 +215,18 @@ function generateSprite() {
   var timer = null;
 
   window.hit = function () {
-    console.log('HITTTTTT!');
-    $.trigger('hit');
-    clearTimeout(timer);
-    clear();
-    ctx.drawImage(positions.hit1, 0, 0);
-    setTimeout(function () {
+    if (game.turn) {
+      $.trigger('hit');
+      console.log('HITTTTTT!');
+      $.trigger('hit');
+      clearTimeout(timer);
       clear();
-      ctx.drawImage(positions.hit2, 0, 0);
-    }, 400);
+      ctx.drawImage(positions.hit1, 0, 0);
+      setTimeout(function () {
+        clear();
+        ctx.drawImage(positions.hit2, 0, 0);
+      }, 400);
+    }
   };
 
   var videoId = '#remote';
