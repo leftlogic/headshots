@@ -100,7 +100,7 @@ function connectVideo() {
       'audio': false
     }, function(stream) {
       console.log('local video streaming');
-      // rtc.attachStream(stream, 'local');
+      rtc.attachStream(stream, 'local');
     });
   } else {
     // TODO grab pic from the camera
