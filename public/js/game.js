@@ -229,7 +229,7 @@ function generateSprite() {
     }
   };
 
-  var videoId = '#remote';
+  var videoId = '#local';
   var video = $(videoId);
 
   var events = 'loadstart progress suspend abort error emptied stalled play pause loadedmetadata loadeddata waiting playing canplay canplaythrough seeking seeked timeupdate ended ratechange durationchange volumechange'.split(' '),
