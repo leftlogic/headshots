@@ -51,6 +51,13 @@ app.configure('production', function () {
   app.set('isproduction', true);
 });
 
+app.configure('live', function () {
+  app.use(express.static(__dirname + '/public'));
+
+  app.set('version', Date.now());
+
+});
+
 app.configure('development', function () {
   app.use(express.static(__dirname + '/public'));
 
