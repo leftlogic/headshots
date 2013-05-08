@@ -177,11 +177,14 @@ function getRect2DForRect3D(positionVector, width3d, height3d, camera, canvas) {
   var topleft2d = projector.projectVector( topleft3d.clone(), camera );
   var dimensions2d = projector.projectVector( dimensions3d.clone(), camera );
 
-  dimensions2d.x *= (canvas.width/2);
-  dimensions2d.y *= (canvas.height/2);
+  var w = window.innerWidth,
+      h = window.innerHeight;
 
-  topleft2d.x = (topleft2d.x +1) *(canvas.width/2);
-  topleft2d.y = (topleft2d.y * (canvas.height/-2))+(canvas.height/2);
+  dimensions2d.x *= (w/2);
+  dimensions2d.y *= (h/2);
+
+  topleft2d.x = (topleft2d.x +1) *(w/2);
+  topleft2d.y = (topleft2d.y * (h/-2))+(h/2);
 
   return {x : topleft2d.x, y:topleft2d.y, width : dimensions2d.x, height : dimensions2d.y};
 }
@@ -228,24 +231,6 @@ function generateSprite() {
       }, 400);
     }
   };
-
-  var videoId = '#local';
-  var video = $(videoId);
-
-  var events = 'loadstart progress suspend abort error emptied stalled play pause loadedmetadata loadeddata waiting playing canplay canplaythrough seeking seeked timeupdate ended ratechange durationchange volumechange'.split(' '),
-    i = events.length;
-
-  while (i--) {
-    video.addEventListener(events[i], echo, false);
-  }
-
-  var done = false;
-  function echo(event) {
-    if (video.videoWidth && !done) {
-      console.log('fire on ' + event.type);
-      renderVideo();
-    }
-  }
 
   window.renderVideo = function () {
     if (video.readyState !== 4) {
@@ -322,27 +307,24 @@ function generateSprite() {
     positionVideo(parent, video);
   };
 
-  window.updateVideo = function () {
-return;
-    if (!video) {
-      video = $(videoId);
+  var videoId = '#remote';
+  var video = $(videoId);
+
+  var events = 'loadstart progress suspend abort error emptied stalled play pause loadedmetadata loadeddata waiting playing canplay canplaythrough seeking seeked timeupdate ended ratechange durationchange volumechange'.split(' '),
+    i = events.length;
+
+  while (i--) {
+    video.addEventListener(events[i], echo, false);
+  }
+
+  var done = false;
+  function echo(event) {
+    if (video.videoWidth && !done) {
+      console.log('fire on ' + event.type);
+      renderVideo();
     }
+  }
 
-    if (video) {
-      var w = video.videoWidth;
-      var h = video.videoHeight;
-
-      var narrow = w > h ? h : w,
-          x = (w - narrow) / 2,
-          y = (h - narrow) / 2,
-          target = 40;
-
-      var dim = playerDimensions.center.hit;
-      //ctx.drawImage(video, x, y, narrow, narrow, dim.x, dim.y, dim.width, dim.height);
-      // video.style.left = (window.innerWidth / 2 - actor.player.position.x * actor.player.scale.x) + dim.x + 'px';
-      // video.style.top = (window.innerHeight / 2 - actor.player.position.y * actor.player.scale.y) + dim.y + 'px';
-    }
-  };
 
   var ctr = 0;
   var types = 'left center right'.split(' ');
@@ -556,8 +538,6 @@ function loop() {
       hit();
     }
   }
-
-  window.updateVideo();
 
   // only render whilst the ball is moving
   if (true || Math.abs(ball.velocity.z) > 0.1) {

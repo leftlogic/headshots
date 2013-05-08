@@ -1,7 +1,6 @@
 # TODO
 
 - BUG: user can join same game twice to trigger it
-- Position of video overlay is wrong on mobile
 - z-index is wrong with video - ball is always in front of video
 - Don't send orientation events unless neccessary
 - Reconnect WebRTC if pin changes
@@ -22,6 +21,7 @@
 
 # DONE
 
+[x] Position of video overlay is wrong on mobile
 [x] If player hits root (/) then exit any game they were in
 [x] Leaning needs to be inverted
 [x] Don't connect to gum until you have a pin
