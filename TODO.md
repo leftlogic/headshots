@@ -1,23 +1,27 @@
 # TODO
 
-- Reconnect WebRTC if pin changes
-- Send hit message
 - Scoring
+- If resize, video shouldn't reappear when game over etc.
+- Throw start position doesn't quite match
 - Hit and swap go
+- Game over page
 - Exit game from any screen
+- BUG: don't throw ball on resume
+- BUG: /join/1234 doesn't work
 - Update to use .min.js
 - Hide screen on landscape
-- If player leaves game for long enough, game disconnects
-- Game over page
-- Tilting is at a weird angle
+- If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)
 - About & Information page
 - x-browser testing/support
-- don't throw ball on resume
+- Reconnect WebRTC if pin changes
+- Protect score somehow
 
 
 # DONE
 
+[x] Tilting is at a weird angle
+[x] Send hit message
 [x] Don't send orientation events unless neccessary
 [x] z-index is wrong with video - ball is always in front of video
 [x] BUG: user can join same game twice to trigger it
