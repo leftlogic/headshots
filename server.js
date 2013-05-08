@@ -61,14 +61,18 @@ app.configure('development', function () {
         key: fs.readFileSync('privatekey.pem'),
         cert: fs.readFileSync('certificate.pem')
       };
-  require('https').createServer(options, app).listen(port+1, function () {
-    var addr = this.address();
-    process.stdout.write('Up and running on https://' + addr.address + ':' + addr.port + '\n');
-  });
+  // require('https').createServer(options, app).listen(port+1, function () {
+  //   var addr = this.address();
+  //   process.stdout.write('Up and running on https://' + addr.address + ':' + addr.port + '\n');
+  // });
 });
 
 if (module.parent) {
   module.exports = server;
+  server.listen(port, function () {
+    var addr = this.address();
+    process.stdout.write('Up and running on http://' + addr.address + ':' + addr.port + '\n');
+  });
 } else {
   server.listen(port, function () {
     var addr = this.address();
