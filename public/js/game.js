@@ -6,7 +6,8 @@ var running = false;
 var interactive = {
   camera: null,
   scene: null,
-  renderer: null
+  renderer: null,
+  projector: new THREE.Projector()
 };
 
 var background = {
@@ -166,80 +167,27 @@ function getCamera() {
 }
 
 function px(x) { 
-  return Math.round(x) + "px"; 
+  return Math.round(x) + "px";
 }
 
-function positionVideo(parent, video) {
-  // now position the wrapping div
-  // Canvas size
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-  var w2 = w / 2;
-  var h2 = h / 2;
 
-  // Project 4 corners
+function getRect2DForRect3D(positionVector, width3d, height3d, camera, canvas) {
+
   var projector = new THREE.Projector();
 
-  // Coordinates relative to object center in object-space
-  // (These numbers are obviously wrong)
-  var dim = playerDimensions[actor.activePosition].hit;
-  var corners = [
-    [dim.x, dim.y], // upper left
-    [dim.x + dim.width, dim.y + dim.height] // bottom right
-  ];
+  var topleft3d = positionVector.clone();
+  var dimensions3d = new THREE.Vector3(width3d, height3d, topleft3d.z);
 
-  var corners = [
-    [-30, -30],
-    [30, 30]
-  ];
+  var topleft2d = projector.projectVector( topleft3d.clone(), camera );
+  var dimensions2d = projector.projectVector( dimensions3d.clone(), camera );
 
-  // Project corners into screen space
-  var screenCorners = [];
-  corners.forEach(function (corner) {
-    var v = new THREE.Vector3(corner[0], corner[1]);
-    v.applyMatrix4(actor.player.matrixWorld);
-    projector.projectVector(v, interactive.camera);
+  dimensions2d.x *= (canvas.width/2);
+  dimensions2d.y *= (canvas.height/2);
 
-    screenCorners.push(v);
-  });
+  topleft2d.x = (topleft2d.x +1) *(canvas.width/2);
+  topleft2d.y = (topleft2d.y * (canvas.height/-2))+(canvas.height/2);
 
-  // Apply coordinates to video
-  // Note: screen space is usually mapped to -1..1 in Y and -a..a in X where a = aspect ratio
-  // (This part is broken, I tried to figure it out and then the page stopped working)
-  var videoWrapperStyle = parent.style;
-  var videoStyle = video.style;
-
-  videoWrapperStyle.left = px(w2 + h2 * screenCorners[0].x); // h2 is not a typo
-  videoWrapperStyle.top = px(h2 + h2 * screenCorners[0].y);
-
-  var width = h2 * (screenCorners[1].x - screenCorners[0].x),
-      height = h2 * (screenCorners[1].y - screenCorners[0].y);
-
-  // set the width of the wrapper to the perfect size of the square
-  // but then offset the video either left or top depending on orientaion
-  // to create a square video effect
-  // var narrow = getNarrow(width, height);
-  // var wide = getWide(width, height);
-
-  // videoWrapperStyle.width = px(narrow);
-  // videoWrapperStyle.height = px(narrow);
-
-  // console.log(px(narrow));
-
-  // var offset = (wide - narrow) / 2;
-
-  // videoStyle.width = px(wide);
-  // videoStyle.height = px(wide);
-  // videoStyle.left = px(-offset);
-  // videoStyle.top = px(-offset);
-
-  //*
-  videoWrapperStyle.left = px(w2 + h2 * screenCorners[0].x); // h2 is not a typo
-  videoWrapperStyle.top = px(h2 + h2 * screenCorners[0].y);
-
-  videoStyle.width = px(h2 * (screenCorners[1].x - screenCorners[0].x));
-  videoStyle.height = px(h2 * (screenCorners[1].y - screenCorners[0].y));
-  //*/
+  return {x : topleft2d.x, y:topleft2d.y, width : dimensions2d.x, height : dimensions2d.y};
 }
 
 function generateSprite() {
@@ -271,6 +219,8 @@ function generateSprite() {
   var timer = null;
 
   window.hit = function () {
+    console.log('HITTTTTT!');
+    $.trigger('hit');
     clearTimeout(timer);
     clear();
     ctx.drawImage(positions.hit1, 0, 0);
@@ -294,25 +244,63 @@ function generateSprite() {
   function echo(event) {
     if (video.videoWidth && !done) {
       console.log('fire on ' + event.type);
-      done = true;
       renderVideo();
-
-      i = events.length;
-      while (i--) {
-        video.removeEventListener(events[i], echo, false);
-      }
     }
   }
 
   window.renderVideo = function () {
+    if (video.readyState !== 4) {
+      return;
+    }
+    done = true;
+    i = events.length;
+    while (i--) {
+      video.removeEventListener(events[i], echo, false);
+    }
+
     video.className = 'streaming';
+    // return;
+
+    var dims = playerDimensions.center.hit;
+    var player = actor.player;
+
+    var y = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
+        x = player.position.x - ((playerDimensions.width * player.scale.x) / 2);
+
+    var face = new THREE.Vector3(
+              x + (dims.x * player.scale.x),
+              y - (dims.y * player.scale.y) - dims.height * player.scale.y,
+              player.position.z);
+
+    var width3d = dims.width * player.scale.x,
+        height3d = dims.height * player.scale.y;
+
+    var coords = getRect2DForRect3D(face, width3d, height3d, interactive.camera, interactive.renderer.domElement);
+
+    // now position
+    var parent = video.parentNode;
+
+    parent.style.left = px(coords.x);
+    parent.style.top = px(coords.y - coords.width);
+    parent.style.width = px(coords.width);
+    parent.style.height = px(coords.width);
+
+    var wide = getWide(video.videoWidth, video.videoHeight); //video.width, video.height);
+    var narrow = getNarrow(video.videoWidth, video.videoHeight);
+    var factor = coords.width / narrow;
+    // console.log(wide, video.videoWidth, video.videoHeight);
+    video.width = wide * factor;
+    video.height = wide * factor;
+
+    var offset = (wide - narrow) / 2 * factor;
+
+    video.style.left = px(-offset);
+    video.style.top = px(-offset);
+
     return;
+
     var parent = video.parentNode,
-        player = actor.player,
-        scale = interactive.camera.aspect,
-        playerScale = player.scale.x * scale,
         dims = playerDimensions.center.hit,
-        target = playerDimensions.center.hit.width * playerScale,
         w = video.videoWidth,
         h = video.videoHeight,
         narrow = getNarrow(w, h),
@@ -360,7 +348,7 @@ return;
   var ctr = 0;
   var types = 'left center right'.split(' ');
 
-  $.on('orientation', function (event) {
+  $.on('remoteOrientation', function (event) {
     var i = 1;
     if (event.data.raw < -75 || event.data.raw > 200) {
       i = 0;
@@ -444,7 +432,7 @@ function createInteractiveScene() {
 
   container.appendChild(renderer.domElement);
 
-  //debug();
+  // debug();
 
   return scene;
 }
@@ -534,14 +522,14 @@ function loop() {
     ball.velocity.z *= -0.7;
   }*/
 
-  var px = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
-      py = player.position.x - ((playerDimensions.width * player.scale.x) / 2);
+  var py = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
+      px = player.position.x - ((playerDimensions.width * player.scale.x) / 2);
 
   p = {
     width: dims.width * player.scale.x,
     height: dims.height * player.scale.y,
-    x: py + (dims.x * player.scale.x),
-    y: px - (dims.y * player.scale.y) - dims.height * player.scale.y
+    x: px + (dims.x * player.scale.x),
+    y: py - (dims.y * player.scale.y) - dims.height * player.scale.y
   };
 
   h = {
@@ -574,7 +562,7 @@ function loop() {
 
   // only render whilst the ball is moving
   if (true || Math.abs(ball.velocity.z) > 0.1) {
-    //interactive.debug.update(p, b, h);
+    // interactive.debug.update(p, b, h);
     interactive.renderer.render(interactive.scene, interactive.camera);
   }
 

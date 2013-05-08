@@ -132,11 +132,13 @@ function init() {
       'video': {'mandatory': {
         // get the video nice and small
         minAspectRatio: 1.333,
-        maxAspectRatio: 1.334
+        maxAspectRatio: 1.334,
+        maxWidth: 320,
+        maxHeight: 180
       }, 'optional': [
         {maxFrameRate: 30},
         {maxWidth: 320},
-        {maxHeigth: 180}
+        {maxHeight: 180}
       ]},
       // 'video': false,
       'audio': false
