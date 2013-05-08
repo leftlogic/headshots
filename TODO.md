@@ -1,8 +1,5 @@
 # TODO
 
-- BUG: user can join same game twice to trigger it
-- z-index is wrong with video - ball is always in front of video
-- Don't send orientation events unless neccessary
 - Reconnect WebRTC if pin changes
 - Send hit message
 - Scoring
@@ -21,6 +18,9 @@
 
 # DONE
 
+[x] Don't send orientation events unless neccessary
+[x] z-index is wrong with video - ball is always in front of video
+[x] BUG: user can join same game twice to trigger it
 [x] Position of video overlay is wrong on mobile
 [x] If player hits root (/) then exit any game they were in
 [x] Leaning needs to be inverted
