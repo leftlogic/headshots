@@ -134,7 +134,7 @@ window.getState = function getState() {
 
 function init(state) {
   console.log(state, pin);
-  if (state === 'start') {
+  if (state === 'start' || (state === 'join' && pin)) {
     console.log('showing start');
     $('#start').classList.add('show');
   } else if (state === 'join') {
@@ -147,9 +147,10 @@ function init(state) {
   }
 }
 
+// via http://stackoverflow.com/a/8349838/22617
 function blur() {
   var field = document.createElement('input');
-  field.setAttribute('type', 'text');
+  field.type = 'text';
   document.body.appendChild(field);
 
   setTimeout(function() {

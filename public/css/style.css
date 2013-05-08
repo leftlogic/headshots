@@ -442,13 +442,12 @@ input[type=submit] {
   overflow: hidden;
   /*width: 100%;*/
   /*height: 100%;*/
-  z-index: 1000000000;
+  /*z-index: 1000000000;*/
   /*overflow: hidden;*/
 }
 
 video {
-  /*display: none;*/
-  /*width: 20%;*/
+  display: none;
 }
 
 video.streaming {
@@ -468,4 +467,30 @@ video.streaming {
 
 #overlays .pincode:before {
   content: '#';
+}
+
+
+.game .three {
+  z-index: 3;
+}
+
+.game .three.backdrop {
+  z-index: 1;
+}
+
+.game #videowrapper {
+  z-index: 2;
+}
+
+#game-control {
+  z-index: 5;
+}
+
+/* not proud of this CSS, but I'm really running out of time! */
+#overlays {
+  z-index: 8;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }

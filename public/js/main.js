@@ -42,18 +42,28 @@ function setupSocket() {
     socket = websocket;
   }
 
+  var lastOrientation = null;
   window.addEventListener('deviceorientation', utils.throttle(function (event) {
-    var g = utils.map(event.gamma, -50, 50, -1, 1) | 0;
-    // var g = event.gamma | 0;
-    socket.send(JSON.stringify({
-      eventName: 'orientation',
-      data: {
-        // type: 'orientation',
-        gamma: g,
-        raw: event.gamma,
-        pin: pin
-      }
-    }));
+    var i = 0;
+    if (event.gamma < -75) {//} || event.gamma > 200) {
+      i = 2;
+    } else if (event.gamma > 75) {
+      i = 1;
+    }
+
+    if (lastOrientation !== i) {
+      lastOrientation = i;
+      // var g = event.gamma | 0;
+      socket.send(JSON.stringify({
+        eventName: 'orientation',
+        data: {
+          position: i,
+          raw: event.gamma,
+          pin: pin
+        }
+      }));
+
+    }
   }, 100), false);
 
   var eventIfTurn = function (event) {
@@ -100,7 +110,7 @@ function connectVideo() {
       'audio': false
     }, function(stream) {
       console.log('local video streaming');
-      // rtc.attachStream(stream, 'local');
+      if (debug) rtc.attachStream(stream, 'local');
     });
   } else {
     // TODO grab pic from the camera
