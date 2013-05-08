@@ -54,7 +54,12 @@ function setPin(p, triggerEvent) {
 
 function joingame(event) {
   event.preventDefault();
-  var p = $('#userpin').value;
+
+  var userpin = $('#userpin'),
+      p = userpin.value;
+
+  blur();
+
   xhr.post('/join', { pin: p }, function (err, result) {
     if (err) {
       console.error('failed to post join');
@@ -140,6 +145,20 @@ function init(state) {
   if (pin || state === 'start') {
     status();
   }
+}
+
+function blur() {
+  var field = document.createElement('input');
+  field.setAttribute('type', 'text');
+  document.body.appendChild(field);
+
+  setTimeout(function() {
+    field.focus();
+    setTimeout(function() {
+        field.style.display = 'none';
+        field.parentNode.removeChild(field);
+    }, 50);
+  }, 50);
 }
 
 var control = $('#game-control');
