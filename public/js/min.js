@@ -22,6 +22,7 @@ $ = (function (document, $) {
   };
 
   element.trigger = function (type, data) {
+    console.log('➤ ' + type, data);
     var event = document.createEvent('HTMLEvents');
     event.initEvent(type, true, true);
     event.data = data || {};
