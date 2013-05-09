@@ -27,17 +27,6 @@ app.configure(function(){
   app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
   app.use(express.session({ store: store, secret: 'spa6kugo3chi4rti8wajy1no5ku' }));
 
-  // if in production, redirect http requests to https
-  if (process.env.NODE_ENV === 'production') {
-    app.use(function (req, res, next) {
-      if (req.connection.encrypted) {
-        return next();
-      } else {
-        res.redirect('https://' + req.headers.host + req.path);
-      }
-    });
-  }
-
   app.use(app.router);
 
   // include our router before the static router
@@ -48,6 +37,13 @@ app.configure(function(){
 app.configure('production', function () {
   app.use(gzippo.staticGzip(__dirname + '/public'));
   app.set('isproduction', true);
+});
+
+app.configure('live', function () {
+  app.use(express.static(__dirname + '/public'));
+
+  app.set('version', Date.now());
+
 });
 
 app.configure('development', function () {
