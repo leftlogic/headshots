@@ -3,6 +3,7 @@ var play = (function () {
 "use strict";
 
 var hit = function () {};
+var gameover = function () {};
 
 var running = false,
     activeTurn = true;
@@ -131,6 +132,10 @@ function redrawAll() {
 
 function resetBall(posX, x, y, speed) {
   var dirty = false;
+
+  setTimeout(function () {
+    $.trigger('endTurn');
+  }, 1000);
 
   if (!posX) {posX = 0;}
   if (!x) {x = 0;}
@@ -312,6 +317,26 @@ function generateSprite() {
         ctx.drawImage(mug, playerDimensions.hit2.x - 90, playerDimensions.hit2.y - 90 + offset);
         paintScore();
       }, 400);
+    }
+  };
+
+  gameover = function () {
+    if (game.gameover) {
+      clearTimeout(timer);
+
+      var animateOver = function () {
+        ctx.drawImage(positions.hit1, 0, offset);
+        ctx.drawImage(mug, playerDimensions.hit1.x - 90, playerDimensions.hit1.y - 90 + offset);
+        paintScore();
+        setTimeout(function () {
+          clear();
+          ctx.drawImage(positions.hit2, 0, offset);
+          ctx.drawImage(mug, playerDimensions.hit2.x - 90, playerDimensions.hit2.y - 90 + offset);
+          paintScore();
+        }, 40);
+      };
+
+      timer = setInterval(animateOver, 1000);
     }
   };
 
@@ -597,9 +622,7 @@ function loop() {
   }
 
   if (activeTurn && ball.velocity.z && Math.abs(ball.velocity.z) < 0.1) {
-    console.log(Math.abs(ball.velocity.z), Math.abs(ball.velocity.z) < 0.1);
     activeTurn = false;
-    $.trigger('endTurn');
   }
 
   if (window.stats) {
