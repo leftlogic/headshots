@@ -4,7 +4,7 @@
 
 var turnEl = $('#turn');
 var removeTurnClass = function() {
-  this.className = '';
+  this.classList.remove('showTurn');
 };
 
 turnEl.on('webkitAnimationEnd', removeTurnClass);

@@ -1,5 +1,7 @@
 # TODO
 
+- BUG: sometimes only the bg renders
+- pin to front
 - Game over page
 - Page too tall with hit screen
 - BUG: single tap on mobile does weird things

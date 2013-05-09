@@ -569,9 +569,10 @@ video.streaming {
   align-self: center;
 }
 
-.announce h1 {
+.announce h1,
+.announce h1:before {
   display: inline-block;
-  font-size: 8rem;
+  font-size: 4rem;
   font-weight: 100;
 }
 

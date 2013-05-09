@@ -347,9 +347,11 @@ function generateSprite() {
     // serious no idea why I can't reuse .y & .height, it makes my brain hurt
     // but it turns out if you just mix around the values, then it just
     // *suddenly* works. ::sign::
+    
+    coords.width++;
 
     parent.style.left = px(coords.x);
-    parent.style.top = px(coords.y - coords.width + /* don't ask*/ (window.innerHeight / 1000 + 1.5 | 0));
+    parent.style.top = px(coords.y - coords.width);// /* don't ask*/ (window.innerHeight / 1000 + 1.5 | 0));
     parent.style.width = px(coords.width);
     parent.style.height = px(coords.width);
 
