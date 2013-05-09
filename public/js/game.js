@@ -637,7 +637,7 @@ function initGame() {
 
   resetBall();
 
-  var track = new Track(document.body),
+  var track = new Track(interactive.renderer.domElement),
       waitforup = false;
 
   track.down = function (event) {

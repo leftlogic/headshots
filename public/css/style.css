@@ -369,6 +369,7 @@ input[type=submit] {
   top: 0;
   width: 32px;
   height: 32px;
+  z-index: 5;
 }
 
 #pause span {
@@ -417,6 +418,7 @@ input[type=submit] {
   padding: 1rem 1.5rem;
   font-size: 45px;
   font-weight: 100;
+  z-index: 5;
 }
 
 #theirscore {
@@ -467,16 +469,15 @@ video.streaming {
   z-index: 9;
 }
 
-#overlays .pincode {
+.scene .pincode {
   position: absolute;
   bottom: .1rem;
   left: .1rem;
 }
 
-#overlays .pincode:before {
+.scene .pincode:before {
   content: '#';
 }
-
 
 .game .three {
   z-index: 3;
