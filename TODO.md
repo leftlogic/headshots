@@ -1,13 +1,12 @@
 # TODO
 
-- If resize, video shouldn't reappear when game over etc.
-- Throw start position doesn't quite match (map x, y to 0-1)
 - Hit and swap go
+- If resize, video shouldn't reappear when game over etc.
 - Game over page
 - Exit game from any screen
 - BUG: don't throw ball on resume
 - BUG: /join/1234 doesn't work
-- Update to use .min.js
+- Update to use build.min.js
 - Hide screen on landscape
 - If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)
@@ -17,10 +16,11 @@
 - Reconnect WebRTC if pin changes
 - Protect score...somehow
 - Tilt screen (css rotate) when player tilts (or...is that required?)
-
+- Delay throwing by the latency
 
 # DONE
 
+[x] Throw start position doesn't quite match (map x, y to 0-1)
 [x] Scoring
 [x] Tilt video when player is tilting
 [x] force https

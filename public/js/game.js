@@ -36,6 +36,12 @@ var playerDimensions = {
       y: 40,
       width: 90,
       height: 90
+    }, 
+    hit2: {
+      x: 178,
+      y: 272,
+      width: 30,
+      height: 30
     }
   },
   left: {
@@ -129,23 +135,23 @@ function resetBall(posX, x, y, speed) {
       interactive.scene.add(actor.ball);
     }
 
-    var posZ = game.turn ? 620 : -220;
+    var posZ = game.turn ? 895 : -220;
 
     if (!game.turn) {
       speed *= -1;
     }
 
     ball.position.z = posZ;
-    ball.position.y = -95;
+    ball.position.y = speed ? actor.floor.position.y + 50 : 0;
 
-    ball.position.x = utils.map(posX, 0, window.innerWidth, -100, 100);
+    ball.position.x = posX;
 
 
     ball.velocity.set(0, 0, -speed * 0.35);
 
     ball.velocity.rotateY(x);
     ball.velocity.rotateZ(0);
-    ball.velocity.rotateX(y * 80);
+    ball.velocity.rotateX(-y * 20 * TO_RADIANS);
 
     videoWrapper.style.zIndex = 1;
   };
@@ -198,7 +204,9 @@ function getFloor(scene) {
 function getCamera() {
   var camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
   camera.position.z = 1000;
+  camera.position.y = -170
   camera.rotation.x = -8 * TO_RADIANS;
+  camera.rotation.x = -2.3 * TO_RADIANS;
 
   return camera;
 }
@@ -259,7 +267,6 @@ function generateSprite() {
   // for the score
   ctx.font = '100 35px Roboto';
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#ECF0F1';
   ctx.textBaseline = 'bottom';
 
 
@@ -268,7 +275,9 @@ function generateSprite() {
   };
 
   function paintScore() {
-    console.log('painting score of ' + game.them.score);
+    ctx.fillStyle = '#2c3e50';
+    ctx.fillRect(canvas.width/2 - 30, 0, 40, 40);
+    ctx.fillStyle = '#ECF0F1';
     ctx.fillText(game.them.score + '', canvas.width/2 - 10, 38);
   }
 
@@ -518,6 +527,19 @@ function isObjectInTarget(rect1, rect2) {
   }
 }
 
+function playerRectIn3d(dims) {
+  var player = actor.player,
+      py = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
+      px = player.position.x - ((playerDimensions.width * player.scale.x) / 2);
+
+  return {
+    width: dims.width * player.scale.x,
+    height: dims.height * player.scale.y,
+    x: px + (dims.x * player.scale.x),
+    y: py - (dims.y * player.scale.y) - dims.height * player.scale.y
+  };
+}
+
 function loop() {
   requestAnimationFrame(loop);
 
@@ -526,9 +548,7 @@ function loop() {
   }
 
   var ball = actor.ball,
-      player = actor.player,
-      b = {}, p = {}, h = {},
-      dims = playerDimensions[actor.activePosition];
+      player = actor.player;
 
   var ballradius = ball.size;
 
@@ -540,24 +560,10 @@ function loop() {
     ball.velocity.y *= -0.7;
   }
 
-  var py = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
-      px = player.position.x - ((playerDimensions.width * player.scale.x) / 2);
-
-  p = {
-    width: dims.width * player.scale.x,
-    height: dims.height * player.scale.y,
-    x: px + (dims.x * player.scale.x),
-    y: py - (dims.y * player.scale.y) - dims.height * player.scale.y
-  };
-
-  h = {
-    width: dims.hit.width * player.scale.x,
-    height: dims.hit.height * player.scale.y,
-    x: px + (dims.hit.x * player.scale.x),
-    y: py - (dims.hit.y * player.scale.y) - dims.hit.height * player.scale.y
-  };
-
-  b = {
+  var p = playerRectIn3d(playerDimensions[actor.activePosition]);
+  var h = playerRectIn3d(playerDimensions[actor.activePosition].hit);
+  var h2 = playerRectIn3d(playerDimensions[actor.activePosition].hit2);
+  var b = {
     width: ballradius * 2,
     height: ballradius * 2,
     x: ball.position.x - ballradius,
@@ -574,13 +580,17 @@ function loop() {
     if (isObjectInTarget(b, h)) {
       hit();
     } else {
+
+      if (isObjectInTarget(b, h2)) {
+        console.log('Ooouf, in the happy sack.');
+      }
       // bring the video to the front
       videoWrapper.style.zIndex = 4;
     }
   }
 
   // only render whilst the ball is moving
-  if (Math.abs(ball.velocity.z) > 0.1) {
+  if (true || Math.abs(ball.velocity.z) > 0.1) {
     // interactive.debug.update(p, b, h);
     interactive.renderer.render(interactive.scene, interactive.camera);
   }
@@ -637,11 +647,11 @@ function initGame() {
   track.up = function (event) {
     console.log('up', event.type);
     if (waitforup) {
-      var x = track.x - track.momentumX;
-      var y = (track.upY - track.downY) - track.momentumY;
+      var x = utils.map(track.downX, 0, window.innerWidth, -100, 100);
+      var y = utils.map((track.upY - track.downY - track.momentumY) * -1, 0, window.innerHeight / 2, 0, 100);
 
       if (game.turn === true) {
-        resetBall(track.downX, track.momentumX, y / window.height, track.duration);
+        resetBall(x, track.momentumX, y, track.duration);
       }
     }
     waitforup = false;
@@ -664,7 +674,7 @@ function initGame() {
     $.trigger('repaintPlayer');
   });
 
-  resetBall(window.innerWidth / 2);
+  resetBall(utils.map(window.innerWidth / 2, 0, window.innerWidth, -100, 100));
 
   // setupDebug();
 

@@ -22,7 +22,11 @@ var dataChannel = {
   send: function(message) {
     for (var connection in rtc.dataChannels) {
       var channel = rtc.dataChannels[connection];
-      channel.send(message);
+      if (channel.readyState === 'open') {
+        channel.send(message);
+      } else {
+        console.warn('channel ' + connection + ' is ' + channel.readyState);
+      }
     }
   },
   recv: function(channel, message) {
@@ -46,9 +50,9 @@ function setupSocket() {
   window.addEventListener('deviceorientation', utils.throttle(function (event) {
     var i = 1;
     if (event.gamma < -75 || event.gamma > 200) {
-      i = 0;
-    } else if (event.gamma > 75) {
       i = 2;
+    } else if (event.gamma > 75) {
+      i = 0;
     }
 
     if (lastOrientation !== i) {
