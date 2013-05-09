@@ -18,26 +18,25 @@ app.configure(function(){
   app.set('view engine' ,'hbs');
 
   app.set('version', pkg.version);
+  app.set('build', pkg.version + '-' + Date.now());
 
   app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
 
-  // this is a hand rolled change that parses each body prop
-  // because we're expecting all content that's posted to be
-  // in JSON format
-  // app.use(function (req, res, next) {
-  //   if (req.body) {
-  //     Object.keys(req.body).forEach(function (key) {
-  //       req.body[key] = JSON.parse(req.body[key]);
-  //     });
-  //   }
-  //   next();
-  // });
-
-
   app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
   app.use(express.session({ store: store, secret: 'spa6kugo3chi4rti8wajy1no5ku' }));
+
+  // if in production, redirect http requests to https
+  if (process.env.NODE_ENV === 'production') {
+    app.use(function (req, res, next) {
+      if (req.connection.encrypted) {
+        return next();
+      } else {
+        res.redirect('https://' + req.headers.host + req.path);
+      }
+    });
+  }
 
   app.use(app.router);
 
@@ -61,25 +60,22 @@ app.configure('development', function () {
         key: fs.readFileSync('privatekey.pem'),
         cert: fs.readFileSync('certificate.pem')
       };
-  // require('https').createServer(options, app).listen(port+1, function () {
-  //   var addr = this.address();
-  //   process.stdout.write('Up and running on https://' + addr.address + ':' + addr.port + '\n');
-  // });
+  require('https').createServer(options, app).listen(port+1, function () {
+    var addr = this.address();
+    process.stdout.write('Up and running on https://' + addr.address + ':' + addr.port + '\n');
+  });
 });
 
 if (module.parent) {
   module.exports = server;
-  server.listen(port, function () {
-    var addr = this.address();
-    process.stdout.write('Up and running on http://' + addr.address + ':' + addr.port + '\n');
-  });
-} else {
-  server.listen(port, function () {
-    var addr = this.address();
-    process.stdout.write('Up and running on http://' + addr.address + ':' + addr.port + '\n');
-  });
 }
 
+server.listen(port, function () {
+  var addr = this.address();
+  process.stdout.write('Up and running on http://' + addr.address + ':' + addr.port + '\n');
+});
+
+// TODO add non-webrtc support
 webRTC.rtc.on('game_msg', function(data, socket) {
   console.log(data, socket);
 });

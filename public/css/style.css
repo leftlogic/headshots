@@ -372,6 +372,7 @@ input[type=submit] {
 }
 
 #pause span {
+  cursor: pointer;
   font-weight: 800;
   background: rgb(160, 160, 160);
   text-decoration: none;
