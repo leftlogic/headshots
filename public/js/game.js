@@ -73,6 +73,26 @@ var playerDimensions = {
     y: 210,
     width: 90,
     height: 90
+  },
+  tilt: {
+    center: {
+      x: 145,
+      y: 40,
+      width: 90,
+      height: 90
+    },
+    left: {
+      x: 62,
+      y: 110,
+      width: 90,
+      height: 90
+    },
+    right: {
+      x: 260,
+      y: 76,
+      width: 90,
+      height: 90
+    }
   }
 };
 
@@ -94,6 +114,7 @@ function getWide(a, b) {
 function redrawAll() {
   background.renderer.render(background.scene, background.camera);
   interactive.renderer.render(interactive.scene, interactive.camera);
+  renderVideo();
 }
 
 function resetBall(posX, x, y, speed) {
@@ -286,7 +307,7 @@ function generateSprite() {
     video.className = 'streaming';
     // return;
 
-    var dims = playerDimensions.center.hit;
+    var dims = playerDimensions.tilt[actor.activePosition];
     var player = actor.player;
 
     var y = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
@@ -354,6 +375,7 @@ function generateSprite() {
     clear();
     ctx.drawImage(positions[types[event.data.position]], 0, 0);
     actor.activePosition = types[event.data.position];
+    videoWrapper.dataset.tilt = actor.activePosition;
     redrawAll();
   });
 
@@ -568,7 +590,6 @@ function initGame() {
     background.camera.updateProjectionMatrix();
     background.renderer.setSize(w, h);
     redrawAll();
-    renderVideo();
   }, false /*yeah, like I need this, but heck, I'm a stickler for habits*/);
 
   document.body.addEventListener('touchmove', function (e) {
@@ -626,6 +647,7 @@ function initGame() {
 
   // setInterval(loop, 1000 / 30);
   running = true;
+  redrawAll();
   loop();
 }
 

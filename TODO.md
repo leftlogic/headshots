@@ -3,7 +3,6 @@
 - Scoring
 - If resize, video shouldn't reappear when game over etc.
 - Throw start position doesn't quite match
-- Tilt video when player is tilting
 - Tilt screen (css rotate) when player tilts (or...is that required?)
 - Hit and swap go
 - Game over page
@@ -23,6 +22,7 @@
 
 # DONE
 
+[x] Tilt video when player is tilting
 [x] force https
 [x] SSL cert
 [x] Tilting is at a weird angle

@@ -488,6 +488,9 @@ video.streaming {
 
 .game #videowrapper {
   z-index: 2;
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  transform-origin: 0 0;
 }
 
 #game-control {
@@ -501,4 +504,22 @@ video.streaming {
   top: 0;
   width: 100%;
   height: 100%;
+}
+
+#videowrapper[data-tilt=left] {
+  -webkit-transform: rotate(-25deg);
+  -moz-transform: rotate(-25deg);
+  transform: rotate(-25deg);
+}
+
+#videowrapper[data-tilt=center] {
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+
+#videowrapper[data-tilt=right] {
+  -webkit-transform: rotate(25deg);
+  -moz-transform: rotate(25deg);
+  transform: rotate(25deg);
 }
