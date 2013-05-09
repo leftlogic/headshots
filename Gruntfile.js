@@ -67,7 +67,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask("postbuild", function() {
     var filename = grunt.template.process(distpaths.min, pkg),
-        text = fs.readFileSync( filename, "utf8" );
+        text = fs.readFileSync( filename, "utf8" ),
+        map;
 
     grunt.log.writeln('checking ' + filename + ' (' + text.length + ')');
 
@@ -93,7 +94,7 @@ module.exports = function (grunt) {
       }
       fs.writeFileSync( filename, text, "utf-8" );
     }
-});
+  });
 
 
   // Project configuration.
@@ -105,6 +106,6 @@ module.exports = function (grunt) {
 
   // Default task.
   grunt.registerTask('build', ['concat', 'uglify', 'postbuild']);
-  grunt.registerTask('default', ['jshint']);
+  grunt.registerTask('default', ['concat']);
 
 };

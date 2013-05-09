@@ -3,6 +3,8 @@
 - Scoring
 - If resize, video shouldn't reappear when game over etc.
 - Throw start position doesn't quite match
+- Tilt video when player is tilting
+- Tilt screen (css rotate) when player tilts (or...is that required?)
 - Hit and swap go
 - Game over page
 - Exit game from any screen
@@ -14,12 +16,15 @@
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)
 - About & Information page
 - x-browser testing/support
+- use put varnish in front of game
 - Reconnect WebRTC if pin changes
-- Protect score somehow
+- Protect score...somehow
 
 
 # DONE
 
+[x] force https
+[x] SSL cert
 [x] Tilting is at a weird angle
 [x] Send hit message
 [x] Don't send orientation events unless neccessary
