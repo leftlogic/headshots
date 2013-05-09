@@ -387,12 +387,12 @@ input[type=submit] {
 }
 
 .panel {
-  background: rgba(44, 62, 80, 0.37);
+  background: rgba(44, 62, 80, 0.7);
   height: 100%;
   top: -100%;
-  -webkit-transition: -webkit-transform 250ms;
-  -moz-transition: -moz-transform 250ms;
-  transition: transform 250ms;
+  -webkit-transition: -webkit-transform 150ms;
+  -moz-transition: -moz-transform 150ms;
+  transition: transform 150ms;
   position: absolute;
   z-index: 1;
   width: 100%;
@@ -523,4 +523,88 @@ video.streaming {
   -webkit-transform: rotate(25deg);
   -moz-transform: rotate(25deg);
   transform: rotate(25deg);
+}
+
+.announce {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  -moz-flex-flow: row wrap;
+  -ms-flex-direction: row;
+  -ms-flex-wrap: wrap;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+  height: 100%;
+}
+
+#hit {
+  background: #e24c3c;
+  -webkit-transform: translateY(220%);
+  -moz-transform: translateY(220%);
+  transform: translateY(220%);
+}
+
+.announce div {
+  -webkit-flex: 1 auto;
+  -moz-flex: 1 auto;
+  -ms-flex: 1 auto;
+  flex: 1 auto;
+  display: -webkit-inline-flex;
+  display: -moz-inline-flex;
+  display: -ms-inline-flex;
+  display: inline-flex;
+  position: relative;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+}
+
+#hit h1 {
+  -webkit-align-self: center;
+  -moz-align-self: center;
+  -ms-align-self: center;
+  align-self: center;
+}
+
+.announce h1 {
+  display: inline-block;
+  font-size: 8rem;
+  font-weight: 100;
+}
+
+#hit.panel.show {
+  -webkit-transform: translateY(100%);
+  -moz-transform: translateY(100%);
+  transform: translateY(100%);
+}
+
+#turn.showTurn {
+  -webkit-animation: cssAnimation 2s 1 ease-in-out;
+}
+
+#turn {
+  width: 100%;
+  position: absolute;
+  z-index: 9;
+  -webkit-transform: scale(0.75) translateY(-200%);
+  opacity: 0.5;
+  height: 100%;
+}
+
+#turn[data-turn="true"] h1:before {
+  content: 'Your turn!';
+}
+
+#turn[data-turn="false"] h1:before {
+  content: 'Their turn';
+}
+
+@-webkit-keyframes cssAnimation {
+  0% { -webkit-transform: scale(0.75) translateY(220%); opacity: 0.5; }
+  10% { -webkit-transform: scale(1) translateY(0%); opacity: 1; }
+  80% { -webkit-transform: scale(1) translateY(0%); opacity: 1; }
+  100% { -webkit-transform: scale(0.5) translateY(220%); opacity: 0.5; }
 }

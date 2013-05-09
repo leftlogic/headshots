@@ -79,13 +79,15 @@ function setupSocket() {
     }
   };
 
-  $.on('pause', function () {
-    socket.send(JSON.stringify({eventName: 'pause'}));
-  }).on('resume', function () {
-    socket.send(JSON.stringify({eventName: 'resume'}));
-  });
+  var eventSender = function (event) {
+    socket.send(JSON.stringify({ eventName: event.type }));
+  };
 
-  $.on('throw', eventIfTurn).on('hit', eventIfTurn);
+  $.on('pause', eventSender);
+  $.on('resume', eventSender);
+  $.on('endTurn', eventSender);
+  $.on('throw', eventIfTurn);
+  $.on('hit', eventIfTurn);
 
   // when receiving events, convert them to remote{EventName} to distinguish in our code
   var re = /(^.)/;

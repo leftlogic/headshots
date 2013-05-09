@@ -2,6 +2,14 @@
 (function () {
 "use strict";
 
+var turnEl = $('#turn');
+var removeTurnClass = function() {
+  this.className = '';
+};
+
+turnEl.on('webkitAnimationEnd', removeTurnClass);
+turnEl.on('animationend', removeTurnClass);
+
 var timer = null,
     title = document.title;
 
@@ -18,8 +26,11 @@ function status(callback) {
         window.game = new Bind(result.data, {
           'me.score': '#myscore',
           'them.score': function (value) {
-            console.log('triggered change');
             $.trigger('theirScore', value);
+          },
+          'turn': function (myturn) {
+            turnEl.dataset.turn = myturn;
+            $.trigger('myturn', myturn);
           }
         });
         window.initGame();
@@ -139,10 +150,12 @@ function init(state) {
   console.log(state, pin);
   if (state === 'start' || (state === 'join' && pin)) {
     console.log('showing start');
-    $('#start').classList.add('show');
+    // $('#start').classList.add('show');
+    showPanel('start');
   } else if (state === 'join') {
     console.log('showing join');
-    $('#join').classList.add('show');
+    // $('#join').classList.add('show');
+    showPanel('join');
   }
 
   if (pin || state === 'start') {
@@ -165,6 +178,13 @@ function blur() {
   }, 50);
 }
 
+function showPanel(id) {
+  panels.forEach(function (panel) {
+    panel.classList.remove('show');
+  });
+  $('#' + id).classList.add('show');
+}
+
 var control = $('#game-control');
 
 tap($('#pause'), pause);
@@ -174,6 +194,12 @@ tap($('#joingame'), joingame);
 
 $.on('remotePause', pause);
 $.on('remoteResume', resume);
+
+var panels = $('.panel');
+
+$.on('showPanel', function (event) {
+  showPanel(event.data);
+});
 
 window.initConnection();
 

@@ -25,15 +25,22 @@
   <div class="scene">
     <div class="bgmountains"></div>
     <div class="floor"></div>
-  <div class="game">
-    <div id="videowrapper">
-      <video id="local" autoplay></video>
-      <video id="remote" autoplay></video>
+    <div class="game">
+      <div id="videowrapper">
+        <video id="local" autoplay></video>
+        <video id="remote" autoplay></video>
+      </div>
     </div>
+    <div id="pause"><span>l l</span></div>
+    <span class="pincode">#{{pin}}</span>
+    <span id="myscore">0</span>
   </div>
-  <div id="pause"><span>l l</span></div>
-  <span class="pincode">#{{pin}}</span>
-  <span id="myscore">0</span>
+</div>
+<div id="hit" class="announce panel">
+  <div><h1>Hit!</h1></div>
+</div>
+<div id="turn" class="announce" data-turn="true">
+  <div><h1></h1></div>
 </div>
 <div id="game-control" class="panel">
   <h2>Are you sure you want to exit the&nbsp;game?</h2>

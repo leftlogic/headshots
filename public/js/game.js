@@ -1,7 +1,8 @@
 /*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true, utils:true, debug:true, xhr:true*/
 "use strict";
 
-var running = false;
+var running = false,
+    activeTurn = false;
 
 var interactive = {
   camera: null,
@@ -102,6 +103,8 @@ var playerDimensions = {
   }
 };
 
+playerDimensions.throw1 = playerDimensions.center;
+
 var TO_RADIANS = Math.PI/180;
 
 var videoWrapper = $('#videowrapper');
@@ -124,52 +127,41 @@ function redrawAll() {
 }
 
 function resetBall(posX, x, y, speed) {
+  var dirty = false;
+
   if (!posX) {posX = 0;}
   if (!x) {x = 0;}
   if (!y) {y = 0;}
-  if (!speed) {speed = 0;}
+  if (!speed) {
+    speed = 0;
+    dirty = true;
+  }
+
   var ball = actor.ball;
 
-  var throwBall = function () {
-    if (game.turn || speed) {
-      interactive.scene.add(actor.ball);
-    }
-
-    var posZ = game.turn ? 895 : -220;
-
-    if (!game.turn) {
-      speed *= -1;
-    }
-
-    ball.position.z = posZ;
-    ball.position.y = speed ? actor.floor.position.y + 50 : 0;
-
-    ball.position.x = posX;
-
-
-    ball.velocity.set(0, 0, -speed * 0.35);
-
-    ball.velocity.rotateY(x);
-    ball.velocity.rotateZ(0);
-    ball.velocity.rotateX(-y * 20 * TO_RADIANS);
-
-    videoWrapper.style.zIndex = 1;
-  };
-
-  // TODO discover timeout based on a ping test
-  var delay = 250;
-
-  if (game.turn === true) {
-    $.trigger('throw', {
-      posX: posX,
-      x: x,
-      y: y,
-      speed: speed
-    });
-    throwBall();
-  } else {
-    setTimeout(throwBall, delay);
+  if (game.turn || speed) {
+    interactive.scene.add(actor.ball);
   }
+
+  var posZ = game.turn ? 895 : -220;
+
+  if (!game.turn) {
+    speed *= -1;
+  }
+
+  ball.position.z = posZ;
+  ball.position.y = speed ? actor.floor.position.y + 50 : 0;
+
+  ball.position.x = posX;
+
+
+  ball.velocity.set(0, 0, -speed * 0.35);
+
+  ball.velocity.rotateY(x);
+  ball.velocity.rotateZ(0);
+  ball.velocity.rotateX(-y * 20 * TO_RADIANS);
+
+  videoWrapper.style.zIndex = 1;
 }
 
 function getContainer(c) {
@@ -204,7 +196,7 @@ function getFloor(scene) {
 function getCamera() {
   var camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
   camera.position.z = 1000;
-  camera.position.y = -170
+  camera.position.y = -170;
   camera.rotation.x = -8 * TO_RADIANS;
   camera.rotation.x = -2.3 * TO_RADIANS;
 
@@ -288,7 +280,9 @@ function generateSprite() {
         offsetX = (video.videoWidth - narrow) / 2,
         offsetY = (video.videoHeight - narrow) / 2;
     ctx.canvas.height = ctx.canvas.width = narrow;
-    ctx.drawImage(video, offsetX, offsetY, narrow, narrow, 0, 0, 90, 90);
+    if (video) {
+      ctx.drawImage(video, offsetX, offsetY, narrow, narrow, 0, 0, 90, 90);
+    }
     return ctx.canvas;
   }
 
@@ -330,7 +324,7 @@ function generateSprite() {
 
     video.className = 'streaming';
 
-    var dims = playerDimensions.tilt[actor.activePosition];
+    var dims = playerDimensions.tilt[actor.activePosition] || playerDimensions.tilt.center;
     var player = actor.player;
 
     var y = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
@@ -355,7 +349,7 @@ function generateSprite() {
     // *suddenly* works. ::sign::
 
     parent.style.left = px(coords.x);
-    parent.style.top = px(coords.y - coords.width + 2);
+    parent.style.top = px(coords.y - coords.width + /* don't ask*/ (window.innerHeight / 1000 + 1.5 | 0));
     parent.style.width = px(coords.width);
     parent.style.height = px(coords.width);
 
@@ -395,8 +389,10 @@ function generateSprite() {
   var types = 'left center right'.split(' ');
 
   $.on('remoteOrientation', function (event) {
-    actor.activePosition = types[event.data.position];
-    $.trigger('repaintPlayer');
+    if (game.turn === true) {
+      actor.activePosition = types[event.data.position];
+      $.trigger('repaintPlayer');
+    }
   });
 
   $.on('repaintPlayer', function () {
@@ -548,9 +544,9 @@ function loop() {
   }
 
   var ball = actor.ball,
-      player = actor.player;
-
-  var ballradius = ball.size;
+      player = actor.player,
+      ballradius = ball.size,
+      position = actor.activePosition.indexOf('throw') === 0 ? 'center' : actor.activePosition;
 
   ball.updatePhysics();
 
@@ -560,9 +556,9 @@ function loop() {
     ball.velocity.y *= -0.7;
   }
 
-  var p = playerRectIn3d(playerDimensions[actor.activePosition]);
-  var h = playerRectIn3d(playerDimensions[actor.activePosition].hit);
-  var h2 = playerRectIn3d(playerDimensions[actor.activePosition].hit2);
+  var p = playerRectIn3d(playerDimensions[position]);
+  var h = playerRectIn3d(playerDimensions[position].hit);
+  var h2 = playerRectIn3d(playerDimensions[position].hit2);
   var b = {
     width: ballradius * 2,
     height: ballradius * 2,
@@ -595,6 +591,12 @@ function loop() {
     interactive.renderer.render(interactive.scene, interactive.camera);
   }
 
+  if (activeTurn && ball.velocity.z && Math.abs(ball.velocity.z) < 0.1) {
+    console.log(Math.abs(ball.velocity.z), Math.abs(ball.velocity.z) < 0.1);
+    activeTurn = false;
+    $.trigger('endTurn');
+  }
+
   if (window.stats) {
     stats.update();
   }
@@ -603,11 +605,7 @@ function loop() {
 
 
 function initGame() {
-  $('.panel').forEach(function (el) {
-    el.classList.remove('show');
-  });
-
-  $('#playing').classList.add('show');
+  $.trigger('showPanel', 'playing');
 
   window.addEventListener('resize', function () {
     var w = window.innerWidth,
@@ -631,7 +629,6 @@ function initGame() {
   var ball = actor.ball = new Ball(0.15);
   ball.drag = 0.985;
 
-
   var player = actor.player = getPlayer(interactive.scene);
   scene.add(player);
 
@@ -646,13 +643,23 @@ function initGame() {
   };
   track.up = function (event) {
     console.log('up', event.type);
-    if (waitforup) {
+    if (waitforup && game.turn === true) {
       var x = utils.map(track.downX, 0, window.innerWidth, -100, 100);
       var y = utils.map((track.upY - track.downY - track.momentumY) * -1, 0, window.innerHeight / 2, 0, 100);
 
-      if (game.turn === true) {
+      // TODO discover timeout based on a ping test
+      var delay = 250;
+
+      $.trigger('throw', {
+        posX: x,
+        x: track.momentumX,
+        y: y,
+        speed: track.duration
+      });
+
+      setTimeout(function () {
         resetBall(x, track.momentumX, y, track.duration);
-      }
+      }, delay);
     }
     waitforup = false;
   };
@@ -664,10 +671,43 @@ function initGame() {
     }
   });
 
+  $.on('remoteEndTurn', function () {
+    game.turn = !game.turn;
+  });
+
+  $.on('endTurn', function () {
+    // this event is listened to in the streaming code to push it across to the peer
+    game.turn = !game.turn;
+  });
+
+  $.on('throw', function () {
+    activeTurn = true;
+  });
+
   $.on('remoteHit', function () {
     if (game.turn === false && game.turns) {
       game.them.score++;
+      game.turn = true;
+      // show hit
+      $.trigger('showPanel', 'hit');
+      setTimeout(function () {
+        $.trigger('showPanel', 'playing');
+      }, 500);
     }
+  });
+
+  $.on('myturn', function () {
+    if (game.turn) {
+      // show the "your turn banner";
+      // center player for ball throwing
+      actor.activePosition = 'center';
+    } else {
+      // show "their turn banner"
+      // show throw player state
+      actor.activePosition = 'throw1';
+    }
+    $.trigger('repaintPlayer');
+    $('#turn').classList.add('showTurn');
   });
 
   $.on('theirScore', function () {
