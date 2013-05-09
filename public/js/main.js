@@ -119,7 +119,9 @@ function connectVideo() {
 }
 
 window.initConnection = function () {
+  var disconnectTimer = null;
   rtc.on('add remote stream', function(stream, socketId) {
+    clearTimeout(disconnectTimer);
     console.log('adding remote stream');
     rtc.attachStream(stream, 'remote');
   });
@@ -127,6 +129,10 @@ window.initConnection = function () {
     console.log('remove stream ' + socketId);
     var video = document.getElementById('remote' + socketId);
     if (video) { video.parentNode.removeChild(video); }
+    disconnectTimer = setTimeout(function () {
+      // TODO don't pause - show connection error
+      $.trigger('pause');
+    }, 10 * 1000);
   });
 
   setupSocket();

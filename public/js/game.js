@@ -236,6 +236,8 @@ function generateSprite() {
   var canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
+  var offset = 25;
+
   var positions = {},
       defaultPosition = game.turn ? 'center' : 'throw1';
 
@@ -244,7 +246,8 @@ function generateSprite() {
     // render the center position
     if (position === defaultPosition) {
       i.onload = function () {
-        ctx.drawImage(positions[position], 0, 0);
+        ctx.drawImage(positions[position], 0, offset);
+        paintScore();
       };
     }
 
@@ -252,11 +255,22 @@ function generateSprite() {
   });
 
   playerDimensions.width = canvas.width = 400;
-  playerDimensions.height = canvas.height = 450;
+  playerDimensions.height = canvas.height = 450 + offset;
+  // for the score
+  ctx.font = '100 35px Roboto';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ECF0F1';
+  ctx.textBaseline = 'bottom';
+
 
   var clear = function () {
-    ctx.clearRect(0, 0, 400, 450);
+    ctx.clearRect(0, 0, 400, 450 + offset);
   };
+
+  function paintScore() {
+    console.log('painting score of ' + game.them.score);
+    ctx.fillText(game.them.score + '', canvas.width/2 - 10, 38);
+  }
 
   function captureMug() {
     // do a screen grab of their face, then crop to a new canvas for re-painting
@@ -266,7 +280,6 @@ function generateSprite() {
         offsetY = (video.videoHeight - narrow) / 2;
     ctx.canvas.height = ctx.canvas.width = narrow;
     ctx.drawImage(video, offsetX, offsetY, narrow, narrow, 0, 0, 90, 90);
-
     return ctx.canvas;
   }
 
@@ -284,12 +297,14 @@ function generateSprite() {
 
       var mug = captureMug();
 
-      ctx.drawImage(positions.hit1, 0, 0);
-      ctx.drawImage(mug, playerDimensions.hit1.x - 90, playerDimensions.hit1.y - 90);
+      ctx.drawImage(positions.hit1, 0, offset);
+      ctx.drawImage(mug, playerDimensions.hit1.x - 90, playerDimensions.hit1.y - 90 + offset);
+      paintScore();
       setTimeout(function () {
         clear();
-        ctx.drawImage(positions.hit2, 0, 0);
-        ctx.drawImage(mug, playerDimensions.hit2.x - 90, playerDimensions.hit2.y - 90);
+        ctx.drawImage(positions.hit2, 0, offset);
+        ctx.drawImage(mug, playerDimensions.hit2.x - 90, playerDimensions.hit2.y - 90 + offset);
+        paintScore();
       }, 400);
     }
   };
@@ -305,7 +320,6 @@ function generateSprite() {
     }
 
     video.className = 'streaming';
-    // return;
 
     var dims = playerDimensions.tilt[actor.activePosition];
     var player = actor.player;
@@ -315,7 +329,7 @@ function generateSprite() {
 
     var face = new THREE.Vector3(
               x + (dims.x * player.scale.x),
-              y - (dims.y * player.scale.y) - dims.height * player.scale.y,
+              y - ((dims.y + offset) * player.scale.y) - dims.height * player.scale.y,
               player.position.z);
 
     var width3d = dims.width * player.scale.x,
@@ -343,10 +357,10 @@ function generateSprite() {
     video.width = wide * factor;
     video.height = wide * factor;
 
-    var offset = (wide - narrow) / 2 * factor;
+    var videooffset = (wide - narrow) / 2 * factor;
 
-    video.style.left = px(-offset);
-    video.style.top = px(-offset);
+    video.style.left = px(-videooffset);
+    video.style.top = px(-videooffset);
   };
 
   var videoId = debug ? '#local' : '#remote';
@@ -372,9 +386,14 @@ function generateSprite() {
   var types = 'left center right'.split(' ');
 
   $.on('remoteOrientation', function (event) {
-    clear();
-    ctx.drawImage(positions[types[event.data.position]], 0, 0);
     actor.activePosition = types[event.data.position];
+    $.trigger('repaintPlayer');
+  });
+
+  $.on('repaintPlayer', function () {
+    clear();
+    ctx.drawImage(positions[actor.activePosition], 0, offset);
+    paintScore();
     videoWrapper.dataset.tilt = actor.activePosition;
     redrawAll();
   });
@@ -639,6 +658,10 @@ function initGame() {
     if (game.turn === false && game.turns) {
       game.them.score++;
     }
+  });
+
+  $.on('theirScore', function () {
+    $.trigger('repaintPlayer');
   });
 
   resetBall(window.innerWidth / 2);

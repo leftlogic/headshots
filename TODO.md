@@ -1,9 +1,7 @@
 # TODO
 
-- Scoring
 - If resize, video shouldn't reappear when game over etc.
-- Throw start position doesn't quite match
-- Tilt screen (css rotate) when player tilts (or...is that required?)
+- Throw start position doesn't quite match (map x, y to 0-1)
 - Hit and swap go
 - Game over page
 - Exit game from any screen
@@ -18,10 +16,12 @@
 - use put varnish in front of game
 - Reconnect WebRTC if pin changes
 - Protect score...somehow
+- Tilt screen (css rotate) when player tilts (or...is that required?)
 
 
 # DONE
 
+[x] Scoring
 [x] Tilt video when player is tilting
 [x] force https
 [x] SSL cert

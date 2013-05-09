@@ -55,15 +55,25 @@ function extend(target, object, mapping, _path) {
     if (typeof value === "object" && value !== null && !Array.isArray(value)) {
       target[key] = extend(target[key] || {}, value, mapping, path);
     } else {
-      elements = $(mapping[path.join('.')] || '☺');
+      var callback;
+      if (typeof mapping[path.join('.')] === 'function') {
+        callback = mapping[path.join('.')];
+      } else {
+        callback = function (value) {
+          if (callback.elements) {
+            forEach.call(callback.elements, function (element) {
+              element.innerHTML = value;
+            });
+          }
+        };
+        callback.elements = $(mapping[path.join('.')] || '☺');
+      }
 
       Object.defineProperty(target, key, {
         set: function (v) {
           value = v;
-          if (elements) {
-            forEach.call(elements, function (element) {
-              element.innerHTML = value;
-            });
+          if (callback) {
+            callback(value);
           }
         },
         get: function () {

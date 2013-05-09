@@ -17,7 +17,10 @@ function status(callback) {
         window.history.replaceState({}, title, '/play');
         window.game = new Bind(result.data, {
           'me.score': '#myscore',
-          'them.score': '#theirscore'
+          'them.score': function (value) {
+            console.log('triggered change');
+            $.trigger('theirScore', value);
+          }
         });
         window.initGame();
       } else if (result.type === 'start') {
