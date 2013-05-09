@@ -29,6 +29,14 @@ Built by @leftlogic aka @rem
   <meta name="viewport" content="width=400">
   <link href='//fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/css/style.css?{{settings.build}}">
+  {{#if settings.isproduction}}
+  <script>
+  // because I'm using stunnel, and don't know how to detect ssl on the request :(
+  if (window.location.protocol.indexOf('https') !== 0) {
+    window.location = 'https://' + window.location.hostname + window.location.pathname;
+  }
+  </script>
+  {{/if}}
   {{#if settings.isproduction}}{{#unless wide}}
   <link rel="prerender" href="/play">
   {{/unless}}{{/if}}
