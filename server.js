@@ -20,6 +20,8 @@ app.configure(function(){
   app.set('version', pkg.version);
   app.set('build', pkg.version + '-' + Date.now());
 
+  app.enable('trust proxy');
+
   app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
@@ -27,6 +29,14 @@ app.configure(function(){
   app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
   app.use(express.session({ store: store, secret: 'spa6kugo3chi4rti8wajy1no5ku' }));
 
+  if (process.env.NODE_ENV !== 'development') {
+    app.use(function (req, res, next) {
+      if (req.secure) {
+        return next();
+      }
+      res.redirect('https://' + req.headers.host + req.url);
+    });
+  }
   app.use(app.router);
 
   // include our router before the static router
