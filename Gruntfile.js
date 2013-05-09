@@ -74,10 +74,10 @@ module.exports = function (grunt) {
 
     // Modify map/min so that it points to files in the same folder;
     // see https://github.com/mishoo/UglifyJS2/issues/47
-    // if (/\.map.json$/.test(filename)) {
-    //   text = text.replace( /"public\//g, "\"/" );
-    //   fs.writeFileSync( filename, text, "utf-8" );
-    // } else 
+    if (/\.map.json$/.test(filename)) {
+      text = text.replace( /"public\//g, "\"/" );
+      fs.writeFileSync( filename, text, "utf-8" );
+    }
 
     if (/\.min\.js$/.test(filename)) {
       // Wrap sourceMap directive in multiline comments (#13274)

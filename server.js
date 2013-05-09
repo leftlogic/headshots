@@ -29,7 +29,7 @@ app.configure(function(){
   app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
   app.use(express.session({ store: store, secret: 'spa6kugo3chi4rti8wajy1no5ku' }));
 
-  if (process.env.NODE_ENV !== 'development') {
+  if (app.settings.env !== 'development') {
     app.use(function (req, res, next) {
       if (req.secure) {
         return next();
@@ -51,25 +51,10 @@ app.configure('production', function () {
 
 app.configure('live', function () {
   app.use(express.static(__dirname + '/public'));
-
-  app.set('version', Date.now());
-
 });
 
 app.configure('development', function () {
   app.use(express.static(__dirname + '/public'));
-
-  app.set('version', Date.now());
-
-  var fs = require('fs'),
-      options = {
-        key: fs.readFileSync('privatekey.pem'),
-        cert: fs.readFileSync('certificate.pem')
-      };
-  require('https').createServer(options, app).listen(port+1, function () {
-    var addr = this.address();
-    process.stdout.write('Up and running on https://' + addr.address + ':' + addr.port + '\n');
-  });
 });
 
 if (module.parent) {

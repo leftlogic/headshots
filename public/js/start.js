@@ -1,4 +1,4 @@
-/*globals pin:true, Bind:true, xhr:true, $:true, alert:true*/
+/*globals pin:true, Bind:true, xhr:true, $:true, alert:true, connection:true, play:true*/
 (function () {
 "use strict";
 
@@ -33,9 +33,8 @@ function status(callback) {
             $.trigger('myturn', myturn);
           }
         });
-        window.initGame();
+        play.init();
       } else if (result.type === 'start') {
-        console.log('starting game');
         setPin(result.data.pin);
         window.history.replaceState({}, title, '/start/' + pin);
         status();
@@ -117,7 +116,7 @@ function tap(el, handler) {
   el.on('click', handler, false);
 }
 
-window.getState = function getState() {
+function getState() {
   var l = window.location,
       state = 'join',
       path;
@@ -185,6 +184,11 @@ function showPanel(id) {
   $('#' + id).classList.add('show');
 }
 
+function firstTo3() {
+  
+}
+
+
 var control = $('#game-control');
 
 tap($('#pause'), pause);
@@ -201,7 +205,9 @@ $.on('showPanel', function (event) {
   showPanel(event.data);
 });
 
-window.initConnection();
+$.on('hit', firstTo3).on('remoteHit', firstTo3);
+
+connection.init();
 
 var state = getState();
 

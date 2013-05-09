@@ -1,7 +1,7 @@
 /*global rtc:true, alert:true, pin:true, get:true, game:true, $:true, utils:true*/
 "use strict";
 
-(function () {
+var connection = (function () {
 
 var videos = [];
 var PeerConnection = window.PeerConnection || window.webkitPeerConnection00 || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
@@ -124,7 +124,7 @@ function connectVideo() {
   }
 }
 
-window.initConnection = function () {
+function initConnection() {
   var disconnectTimer = null;
   rtc.on('add remote stream', function(stream, socketId) {
     clearTimeout(disconnectTimer);
@@ -156,5 +156,9 @@ $.on('pinchange', function () {
 
   rtc.connect((proto.indexOf('https') !== -1 ? 'wss:' : 'ws:') + href.substring(proto.length).split('#')[0], pin);
 });
+
+return {
+  init: initConnection
+};
 
 })();

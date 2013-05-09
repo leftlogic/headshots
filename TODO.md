@@ -1,13 +1,13 @@
 # TODO
 
 - Game over page
+- About & Information page
 - BUG: sometimes only the bg renders
 - Page too tall with "Hit!" screen
 - BUG: single tap on mobile does weird things
 - Update to use build.min.js
 - If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)
-- About & Information page
 - use put varnish in front of game
 
 # TODO...one day

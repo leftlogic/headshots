@@ -1,5 +1,8 @@
 /*globals THREE:true, Ball:true, Track:true, stats:true, $:true, game:true, utils:true, debug:true, xhr:true*/
+var play = (function () {
 "use strict";
+
+var hit = function () {};
 
 var running = false,
     activeTurn = true;
@@ -37,7 +40,7 @@ var playerDimensions = {
       y: 40,
       width: 90,
       height: 90
-    }, 
+    },
     hit2: {
       x: 178,
       y: 272,
@@ -288,7 +291,7 @@ function generateSprite() {
 
   var timer = null;
 
-  window.hit = function () {
+  hit = function () {
     if (game.turn) {
       xhr.get('/hit');
       game.me.score++;
@@ -726,8 +729,8 @@ function initGame() {
   loop();
 }
 
+return {
+  init: initGame
+};
 
-// returns a random number between the two limits provided
-function randomRange(min, max){
-  return ((Math.random()*(max-min)) + min);
-}
+})();

@@ -1,5 +1,9 @@
 /*globals THREE:true*/
+var Ball = (function () {
 "use strict";
+
+var TO_RADIANS = Math.PI / 180;
+
 // Particle3D class
 var Ball = function (scale) {
   // var material = new THREE.ParticleCanvasMaterial({
@@ -18,7 +22,6 @@ var Ball = function (scale) {
   var material = new THREE.ParticleBasicMaterial( {
     map: THREE.ImageUtils.loadTexture('/images/ball.png', null, function () {
       ball.size = material.map.image.width / 2 * ball.scale.x;
-      window.redrawAll();
     })
   });
 
@@ -80,3 +83,7 @@ THREE.Vector3.prototype.rotateZ = function(angle) {
   this.x= (tempy*-sinRY)+(tempx*cosRY);
 
 };
+
+return Ball;
+
+})();

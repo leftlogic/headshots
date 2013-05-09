@@ -1,5 +1,9 @@
 /*globals THREE:true*/
+var Ball = (function () {
 "use strict";
+
+var TO_RADIANS = Math.PI / 180;
+
 // Particle3D class
 var Ball = function (scale) {
   // var material = new THREE.ParticleCanvasMaterial({
@@ -80,3 +84,4 @@ THREE.Vector3.prototype.rotateZ = function(angle) {
   this.x= (tempy*-sinRY)+(tempx*cosRY);
 
 };
+})();
