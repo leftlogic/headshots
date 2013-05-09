@@ -1,11 +1,9 @@
 # TODO
 
-- BUG: sometimes only the bg renders
-- pin to front
 - Game over page
-- Page too tall with hit screen
+- BUG: sometimes only the bg renders
+- Page too tall with "Hit!" screen
 - BUG: single tap on mobile does weird things
-- BUG: http doesn't work online
 - Update to use build.min.js
 - If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)
@@ -26,6 +24,8 @@
 
 # DONE
 
+[x] BUG: http doesn't work online (and can't redirect)
+[x] pin to front
 [x] Hit and swap go
 [x] BUG: don't throw ball on resume
 [x] Throw start position doesn't quite match (map x, y to 0-1)

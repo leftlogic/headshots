@@ -2,7 +2,7 @@
 "use strict";
 
 var running = false,
-    activeTurn = false;
+    activeTurn = true;
 
 var interactive = {
   camera: null,
@@ -588,7 +588,7 @@ function loop() {
   }
 
   // only render whilst the ball is moving
-  if (true || Math.abs(ball.velocity.z) > 0.1) {
+  if (activeTurn || Math.abs(ball.velocity.z) > 0.1) {
     // interactive.debug.update(p, b, h);
     interactive.renderer.render(interactive.scene, interactive.camera);
   }

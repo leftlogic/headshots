@@ -473,6 +473,7 @@ video.streaming {
   position: absolute;
   bottom: .1rem;
   left: .1rem;
+  z-index: 9;
 }
 
 .scene .pincode:before {
