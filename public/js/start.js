@@ -198,6 +198,7 @@ function firstToWin() {
   }
 
   if (gameover) {
+    game.gameover = true; // locks the game up
     $.trigger('gameover');
   }
 }

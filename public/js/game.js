@@ -2,7 +2,7 @@
 var play = (function () {
 "use strict";
 
-var hit = function () {};
+// var hit = function () {};
 var gameover = function () {};
 
 var running = false,
@@ -292,7 +292,7 @@ function generateSprite() {
 
   var timer = null;
 
-  hit = function () {
+  window.hit = function () {
     if (game.turn) {
       xhr.get('/hit');
       game.me.score++;
@@ -665,7 +665,7 @@ function initGame() {
     waitforup = true;
   };
   track.up = function (event) {
-    if (waitforup && game.turn === true) {
+    if (waitforup && game.turn === true && !game.gameover) {
       var x = utils.map(track.downX, 0, window.innerWidth, -100, 100);
       var y = utils.map((track.upY - track.downY - track.momentumY) * -1, 0, window.innerHeight / 2, 0, 100);
 
@@ -697,12 +697,16 @@ function initGame() {
   });
 
   $.on('remoteEndTurn', function () {
-    game.turn = !game.turn;
+    if (!game.gameover) {
+      game.turn = !game.turn;
+    }
   });
 
   $.on('endTurn', function () {
     // this event is listened to in the streaming code to push it across to the peer
-    game.turn = !game.turn;
+    if (!game.gameover) {
+      game.turn = !game.turn;
+    }
   });
 
   $.on('throw', function () {
