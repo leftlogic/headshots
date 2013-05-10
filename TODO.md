@@ -1,7 +1,10 @@
 # TODO
 
 - Game over page
-- About & Information page
+- Scale the degree of throwing on the y axis
+- Sync up events
+- Turn gets fucked
+- Information page
 - BUG: sometimes only the bg renders
 - Page too tall with "Hit!" screen
 - BUG: single tap on mobile does weird things
@@ -24,6 +27,7 @@
 
 # DONE
 
+[x] About 
 [x] BUG: http doesn't work online (and can't redirect)
 [x] pin to front
 [x] Hit and swap go

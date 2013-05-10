@@ -612,3 +612,28 @@ video.streaming {
   80% { -webkit-transform: scale(1) translateY(0%); opacity: 1; }
   100% { -webkit-transform: scale(0.5) translateY(220%); opacity: 0.5; }
 }
+
+.info p,
+.info li {
+  line-height: 1.5rem;
+  font-weight: 100;
+}
+
+.info a {
+  font-weight: 300;
+  color: #ECF0F1;
+}
+
+.info p,
+.info ul {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.info {
+  padding-bottom: 1rem;
+}
+
+.info h2 {
+  font-weight: 300;
+}
