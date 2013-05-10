@@ -582,18 +582,18 @@ function loop() {
     ball.velocity.y *= -0.7;
   }
 
-  var p = playerRectIn3d(playerDimensions[position]);
-  var h = playerRectIn3d(playerDimensions[position].hit);
-  var h2 = playerRectIn3d(playerDimensions[position].hit2);
-  var b = {
-    width: ballradius * 2,
-    height: ballradius * 2,
-    x: ball.position.x - ballradius,
-    y: ball.position.y - ballradius
-  };
-
-
   if ((ball.position.z - ballradius < player.position.z) && (ball.position.z - ballradius - ball.velocity.z > player.position.z)) {
+    var p = playerRectIn3d(playerDimensions[position]);
+    var h = playerRectIn3d(playerDimensions[position].hit);
+
+    var b = {
+      width: ballradius * 2,
+      height: ballradius * 2,
+      x: ball.position.x - ballradius,
+      y: ball.position.y - ballradius
+    };
+
+
     // if we hit the player, make the ball bounce backwards.
     if (isObjectInTarget(b, p)) {
       ball.velocity.z *= -0.7;
@@ -602,10 +602,6 @@ function loop() {
     if (isObjectInTarget(b, h)) {
       hit();
     } else {
-
-      if (isObjectInTarget(b, h2)) {
-        console.log('Ooouf, in the happy sack.');
-      }
       // bring the video to the front
       videoWrapper.style.zIndex = 4;
     }
@@ -671,7 +667,7 @@ function initGame() {
 
       // TODO discover timeout based on a ping test
       var delay = 250;
-
+      xhr.get('/throw');
       $.trigger('throw', {
         posX: x,
         x: track.momentumX,
@@ -736,6 +732,7 @@ function initGame() {
     }
     $.trigger('repaintPlayer');
     $('#turn').classList.add('showTurn');
+    if (game.turn) resetBall(utils.map(window.innerWidth / 2, 0, window.innerWidth, -100, 100));
   });
 
   $.on('theirScore', function () {
