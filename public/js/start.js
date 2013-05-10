@@ -7,6 +7,8 @@ var removeTurnClass = function() {
   this.classList.remove('showTurn');
 };
 
+var towin = null;
+
 turnEl.on('webkitAnimationEnd', removeTurnClass);
 turnEl.on('animationend', removeTurnClass);
 
@@ -33,6 +35,7 @@ function status(callback) {
             $.trigger('myturn', myturn);
           }
         });
+        towin = window.game.towin;
         play.init();
       } else if (result.type === 'start') {
         setPin(result.data.pin);
@@ -143,7 +146,7 @@ function getState() {
   }
 
   return state;
-};
+}
 
 function init(state) {
   console.log(state, pin);
@@ -184,13 +187,12 @@ function showPanel(id) {
   $('#' + id).classList.add('show');
 }
 
-var hitlimit = 2;
-function firstTo3() {
+function firstToWin() {
   var gameover = false;
-  if (window.game.me.score === hitlimit) {
+  if (window.game.me.score === towin) {
     $('#gameover').dataset.winner = true;
     gameover = true;
-  } else if (window.game.them.score === hitlimit) {
+  } else if (window.game.them.score === towin) {
     $('#gameover').dataset.winner = false;
     gameover = true;
   }
@@ -217,7 +219,7 @@ $.on('showPanel', function (event) {
   showPanel(event.data);
 });
 
-$.on('hit', firstTo3).on('remoteHit', firstTo3);
+$.on('hit', firstToWin).on('remoteHit', firstToWin);
 
 connection.init();
 

@@ -620,27 +620,27 @@ video.streaming {
   100% { -webkit-transform: scale(0.5) translateY(220%); opacity: 0.5; }
 }
 
-.info p,
-.info li {
+.copy p,
+.copy li {
   line-height: 1.5rem;
   font-weight: 100;
 }
 
-.info a {
+.copy a {
   font-weight: 300;
   color: #ECF0F1;
 }
 
-.info p,
-.info ul {
+.copy p,
+.copy ul {
   margin-left: 1rem;
   margin-right: 1rem;
 }
 
-.info {
+.copy {
   padding-bottom: 1rem;
 }
 
-.info h2 {
+.copy h2 {
   font-weight: 300;
 }

@@ -681,7 +681,7 @@ function initGame() {
 
       setTimeout(function () {
         $.trigger('endTurn');
-      }, 1000);
+      }, 1500);
 
       setTimeout(function () {
         resetBall(x, track.momentumX, y, track.duration);
@@ -692,7 +692,6 @@ function initGame() {
 
   $.on('remoteThrow', function (event) {
     if (game.turn === false) {
-      game.turns--;
       resetBall(event.data.posX, event.data.x, event.data.y, event.data.speed);
     }
   });
@@ -711,7 +710,7 @@ function initGame() {
   });
 
   $.on('remoteHit', function () {
-    if (game.turn === false && game.turns) {
+    if (game.turn === false) {
       game.them.score++;
       // show hit
       $.trigger('showPanel', 'hit');
