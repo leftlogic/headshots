@@ -133,10 +133,6 @@ function redrawAll() {
 function resetBall(posX, x, y, speed) {
   var dirty = false;
 
-  setTimeout(function () {
-    $.trigger('endTurn');
-  }, 1000);
-
   if (!posX) {posX = 0;}
   if (!x) {x = 0;}
   if (!y) {y = 0;}
@@ -667,10 +663,8 @@ function initGame() {
 
   track.down = function (event) {
     waitforup = true;
-    console.log('down', event.type);
   };
   track.up = function (event) {
-    console.log('up', event.type);
     if (waitforup && game.turn === true) {
       var x = utils.map(track.downX, 0, window.innerWidth, -100, 100);
       var y = utils.map((track.upY - track.downY - track.momentumY) * -1, 0, window.innerHeight / 2, 0, 100);
@@ -684,6 +678,10 @@ function initGame() {
         y: y,
         speed: track.duration
       });
+
+      setTimeout(function () {
+        $.trigger('endTurn');
+      }, 1000);
 
       setTimeout(function () {
         resetBall(x, track.momentumX, y, track.duration);
@@ -715,7 +713,6 @@ function initGame() {
   $.on('remoteHit', function () {
     if (game.turn === false && game.turns) {
       game.them.score++;
-      game.turn = true;
       // show hit
       $.trigger('showPanel', 'hit');
       setTimeout(function () {

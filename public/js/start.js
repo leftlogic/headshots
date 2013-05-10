@@ -184,8 +184,20 @@ function showPanel(id) {
   $('#' + id).classList.add('show');
 }
 
+var hitlimit = 2;
 function firstTo3() {
-  
+  var gameover = false;
+  if (window.game.me.score === hitlimit) {
+    $('#gameover').dataset.winner = true;
+    gameover = true;
+  } else if (window.game.them.score === hitlimit) {
+    $('#gameover').dataset.winner = false;
+    gameover = true;
+  }
+
+  if (gameover) {
+    $.trigger('gameover');
+  }
 }
 
 

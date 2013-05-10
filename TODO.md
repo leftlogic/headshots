@@ -1,12 +1,9 @@
 # TODO
 
+- Game shouldn't start until connection is established
 - Game over page
 - Scale the degree of throwing on the y axis
-- Sync up events
-- Turn gets fucked
 - Information page
-- BUG: sometimes only the bg renders
-- Page too tall with "Hit!" screen
 - BUG: single tap on mobile does weird things
 - Update to use build.min.js
 - If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
@@ -15,6 +12,7 @@
 
 # TODO...one day
 
+- Sync up events (it should be fine if both on same wifi)
 - Exit game from any screen
 - If resize, video shouldn't reappear when game over etc.
 - BUG: /join/1234 doesn't work
@@ -24,9 +22,12 @@
 - Protect score...somehow
 - Tilt screen (css rotate) when player tilts (or...is that required?)
 - Delay throwing by the latency
+- BUG: sometimes only the bg renders (no longer happening?)
 
 # DONE
 
+[x] Page too tall with "Hit!" screen
+[x] Turn gets fucked
 [x] About 
 [x] BUG: http doesn't work online (and can't redirect)
 [x] pin to front

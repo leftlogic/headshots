@@ -116,6 +116,7 @@ function connectVideo() {
       'audio': false
     }, function(stream) {
       console.log('local video streaming');
+      $.trigger('readylocal');
       if (debug) rtc.attachStream(stream, 'local');
     });
   } else {
@@ -129,6 +130,7 @@ function initConnection() {
   rtc.on('add remote stream', function(stream, socketId) {
     clearTimeout(disconnectTimer);
     console.log('adding remote stream');
+    $.trigger('readyremote');
     rtc.attachStream(stream, 'remote');
   });
   rtc.on('disconnect stream', function(socketId) {
@@ -137,12 +139,13 @@ function initConnection() {
     if (video) { video.parentNode.removeChild(video); }
     disconnectTimer = setTimeout(function () {
       // TODO don't pause - show connection error
+      $.trigger('disconnect');
       $.trigger('pause');
     }, 10 * 1000);
   });
 
   setupSocket();
-};
+}
 
 rtc.on('connect', connectVideo);
 
@@ -155,6 +158,24 @@ $.on('pinchange', function () {
   } catch (e) {}
 
   rtc.connect((proto.indexOf('https') !== -1 ? 'wss:' : 'ws:') + href.substring(proto.length).split('#')[0], pin);
+});
+
+// should/could be done with bitwise state checking, 
+// but it's late :(
+var state = {
+  readyremote: false,
+  readylocal: false
+};
+$.on('readyremote', function () {
+  state.readyremote = true;
+  if (state.readylocal) {
+    $.trigger('ready');
+  }
+}).on('readylocal', function () {
+  state.readylocal = true;
+  if (state.readyremote) {
+    $.trigger('ready');
+  }
 });
 
 return {
