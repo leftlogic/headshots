@@ -1,4 +1,4 @@
-#pause { -webkit-font-smoothing: antialiased; }
+#pause, #hit, #turn { -webkit-font-smoothing: antialiased; }
 
 .scene, #game-control {
   -webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
@@ -102,6 +102,8 @@ html {
 
 footer {
   padding: 1rem;
+  position: relative;
+  height: 1rem;
 }
 
 footer a {
@@ -109,10 +111,15 @@ footer a {
   font-size: 1rem;
   font-weight: 100;
   text-decoration: none;
+  padding: 1rem;
+  position: absolute; 
+  bottom: 0;
+  left: 0;
 }
 
 footer a:last-child {
-  float: right; 
+  left: auto;
+  right: 0;
 }
 
 .pin .info {
