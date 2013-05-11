@@ -1,7 +1,7 @@
 # TODO
 
-- Game shouldn't start until connection is established
 - Game over page
+- Game shouldn't start until connection is established
 - Scale the degree of throwing on the y axis
 - Information page
 - BUG: single tap on mobile does weird things

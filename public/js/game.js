@@ -664,7 +664,6 @@ function initGame() {
     if (waitforup && game.turn === true && !game.gameover) {
       var x = utils.map(track.downX, 0, window.innerWidth, -100, 100);
       var y = utils.map((track.upY - track.downY - track.momentumY) * -1, 0, window.innerHeight / 2, 0, 100);
-
       // TODO discover timeout based on a ping test
       var delay = 250;
       xhr.get('/throw');
@@ -750,7 +749,10 @@ function initGame() {
 }
 
 return {
-  init: initGame
+  init: initGame,
+  running: function (v) {
+    running = v;
+  }
 };
 
 })();
