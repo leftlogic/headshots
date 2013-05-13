@@ -39,8 +39,6 @@ function status(callback) {
         play.init();
 
         // this is done after play.init to ensure the event order is right
-        $.on('hit', firstToWin);
-        $.on('remoteHit', firstToWin);
       } else if (result.type === 'start') {
         setPin(result.data.pin);
         window.history.replaceState({}, title, '/start/' + pin);
@@ -192,19 +190,29 @@ function showPanel(id) {
 }
 
 function firstToWin() {
-  var gameover = false;
-  if (window.game.me.score === towin) {
-    $('#gameover').dataset.winner = true;
-    gameover = true;
-  } else if (window.game.them.score === towin) {
-    $('#gameover').dataset.winner = false;
-    gameover = true;
-  }
+  // lame, but we need to make sure this is called last in the stack
+  // of event handlers. TODO: create event system to push or shift to queue
+  setTimeout(function () {
+    var gameover = false;
+    if (window.game.me.score === towin || window.game.them.score === towin) {
+      gameover = true;
+    }
 
-  if (gameover) {
-    window.game.gameover = true; // locks the game up
-    $.trigger('gameover');
-  }
+    if (gameover) {
+      window.game.gameover = true; // locks the game up
+      $.trigger('gameover');
+    }
+  }, 0);
+}
+
+function playagain() {
+  xhr.get('/playagain', function (err, result) {
+    if (result) {
+      status(function () {
+        $.trigger('playagain');
+      });
+    }
+  });
 }
 
 
@@ -214,12 +222,12 @@ tap($('#pause'), pause);
 tap($('#resume'), resume);
 tap($('#exit'), exit);
 tap($('#joingame'), joingame);
+tap($('#again'), playagain);
 
 $.on('remotePause', pause);
 $.on('remoteResume', resume);
-$.on('disconnect', function () {
-  // init('start');
-});
+$.on('hit', firstToWin);
+$.on('remoteHit', firstToWin);
 
 var panels = $('.panel');
 
@@ -228,12 +236,14 @@ $.on('showPanel', function (event) {
 });
 
 $.on('disconnect', function () {
-  xhr.get('/other-player-left', function (err) {
+  xhr.get('/other-player-left', function (err, result) {
     if (err) {
       console.error(err);
       return;
     }
-    init('start');
+    if (result) {
+      init('start');
+    }
   });
 });
 

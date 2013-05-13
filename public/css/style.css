@@ -538,16 +538,21 @@ video.streaming {
   display: -moz-flex;
   display: -ms-flex;
   display: flex;
-  -webkit-flex-flow: row wrap;
-  -moz-flex-flow: row wrap;
+  -webkit-flex-flow: column wrap;
+  -moz-flex-flow: column wrap;
   -ms-flex-direction: row;
   -ms-flex-wrap: wrap;
-  -ms-flex-flow: row wrap;
-  flex-flow: row wrap;
+  -ms-flex-flow: column wrap;
+  flex-flow: column wrap;
   height: 100%;
 }
 
+/*#gameover.announce {
+  
+}
+*/
 #hit {
+  z-index: 10;
   height: 0;
   background: #e24c3c;
   -webkit-transform: translateY(220%);
@@ -601,6 +606,8 @@ video.streaming {
   position: absolute;
   z-index: 9;
   -webkit-transform: scale(0.75) translateY(-200%);
+  -moz-transform: scale(0.75) translateY(-200%);
+  transform: scale(0.75) translateY(-200%);
   opacity: 0.5;
   height: 100%;
 }
@@ -611,6 +618,30 @@ video.streaming {
 
 #turn[data-turn="false"] h1:before {
   content: 'Their turn';
+}
+
+#gameover {
+  width: 100%;
+  position: absolute;
+  z-index: 9;
+  -webkit-transform: translateY(-200%);
+  -moz-transform: translateY(-200%);
+  transform: translateY(-200%);
+  height: 100%;
+}
+
+#gameover.show { 
+  -webkit-transform: translateY(0%); 
+  -moz-transform: translateY(0%); 
+  transform: translateY(0%); 
+}
+
+#gameover[data-winner="true"] h1:before {
+  content: 'You won!';
+}
+
+#gameover[data-winner="false"] h1:before {
+  content: 'You lost.';
 }
 
 @-webkit-keyframes cssAnimation {

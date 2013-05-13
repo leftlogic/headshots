@@ -1,19 +1,15 @@
 # TODO
 
-- When hit, video appears over hit image
-- Hit too quick
-- Loser doesn't get game over event
-- Game over page
+- If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
 - Game shouldn't start until connection is established
 - Information page
 - BUG: single tap on mobile does weird things
-- Update to use build.min.js
-- If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)
 - use put varnish in front of game
 
 # TODO...one day
 
+- build.min.js causes errors
 - Sync up events (it should be fine if both on same wifi)
 - Exit game from any screen
 - If resize, video shouldn't reappear when game over etc.
@@ -28,6 +24,12 @@
 
 # DONE
 
+[x] Play again / reset button
+[x] Game over page
+[x] Add game over winner head
+[x] Loser doesn't get game over event
+[x] Hit too quick
+[x] When hit, video appears over hit image
 [x] Scale the degree of throwing on the y axis
 [x] Page too tall with "Hit!" screen
 [x] Turn gets fucked

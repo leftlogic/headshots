@@ -22,7 +22,7 @@ $ = (function (document, $) {
   };
 
   element.trigger = function (type, data) {
-    console.log('➤ ' + type, data, (new Error).stack.replace(/^Error\n/, '\n'));
+    console.log('➤ ' + type, data); //, (new Error).stack.replace(/^Error\n/, '\n'));
     var event = document.createEvent('HTMLEvents');
     event.initEvent(type, true, true);
     event.data = data || {};

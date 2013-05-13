@@ -2,9 +2,6 @@
 var play = (function () {
 "use strict";
 
-// var hit = function () {};
-var gameover = function () {};
-
 var running = false,
     activeTurn = true,
     initComplete = false;
@@ -86,7 +83,7 @@ var playerDimensions = {
     width: 90,
     height: 90
   },
-  tilt: {
+  moving: {
     center: {
       x: 145,
       y: 40,
@@ -104,11 +101,24 @@ var playerDimensions = {
       y: 76,
       width: 90,
       height: 90
+    },
+    celebration1: {
+      x: 144,
+      y: 139,
+      width: 90,
+      height: 90
+    },
+    celebration2: {
+      x: 144,
+      y: 29,
+      width: 90,
+      height: 90
     }
   }
 };
 
 playerDimensions.throw1 = playerDimensions.center;
+playerDimensions.throw2 = playerDimensions.center;
 
 var TO_RADIANS = Math.PI/180;
 
@@ -246,7 +256,7 @@ function generateSprite() {
   var positions = {},
       defaultPosition = game.turn ? 'center' : 'throw1';
 
-  ['center','left','right', 'hit1', 'hit2', 'throw1'].forEach(function (position) {
+  ['center','left','right', 'hit1', 'hit2', 'throw1', 'throw2', 'celebration1', 'celebration2', 'lose1', 'lose2'].forEach(function (position) {
     var i = positions[position] = new Image();
     // render the center position
     if (position === defaultPosition) {
@@ -265,16 +275,15 @@ function generateSprite() {
   ctx.font = '100 35px Roboto';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
-
+  ctx.fillStyle = '#ECF0F1';
 
   var clear = function () {
     ctx.clearRect(0, 0, 400, 450 + offset);
   };
 
   function paintScore() {
-    ctx.fillStyle = '#2c3e50';
-    ctx.fillRect(canvas.width/2 - 30, 0, 40, 40);
-    ctx.fillStyle = '#ECF0F1';
+    // ctx.fillStyle = '#2c3e50';
+    // ctx.fillRect(canvas.width/2 - 30, 0, 40, 40);
     ctx.fillText(game.them.score + '', canvas.width/2 - 10, 38);
   }
 
@@ -291,10 +300,23 @@ function generateSprite() {
     return ctx.canvas;
   }
 
+  function novideo() {
+    return !{
+      celebration1: 1,
+      celebration2: 1,
+      left: 1,
+      right: 1,
+      center: 1,
+      throw1: 1,
+      throw2: 1
+    }[actor.activePosition];
+  }
+
   var timer = null;
 
   window.hit = function () {
     if (game.turn) {
+      actor.activePosition = 'hit1';
       xhr.get('/hit');
       game.me.score++;
       $.trigger('hit');
@@ -317,27 +339,53 @@ function generateSprite() {
     }
   };
 
-  gameover = function () {
+  var gameoverTimer = null;
+
+  $.on('playagain', function () {
+    $('#gameover').classList.remove('show');
+    clearTimeout(gameoverTimer);
+    actor.activePosition = game.turn ? 'center' : 'throw1';
+    $.trigger('repaintPlayer');
+  });
+
+  $.on('gameover', function () {
     if (game.gameover) {
-      clearTimeout(timer);
+      var winner = game.me.score > game.them.score,
+          key = winner ? 'celebration' : 'lose';
+
+      activeTurn = false;
 
       var animateOver = function () {
-        ctx.drawImage(positions.hit1, 0, offset);
-        ctx.drawImage(mug, playerDimensions.hit1.x - 90, playerDimensions.hit1.y - 90 + offset);
-        paintScore();
-        setTimeout(function () {
+        clear();
+        actor.activePosition = key + '1';
+        renderVideo();
+        ctx.drawImage(positions[actor.activePosition], 0, offset);
+        interactive.renderer.render(interactive.scene, interactive.camera);
+        gameoverTimer = setTimeout(function () {
           clear();
-          ctx.drawImage(positions.hit2, 0, offset);
-          ctx.drawImage(mug, playerDimensions.hit2.x - 90, playerDimensions.hit2.y - 90 + offset);
-          paintScore();
-        }, 40);
+          actor.activePosition = key + '2';
+          renderVideo();
+          ctx.drawImage(positions[actor.activePosition], 0, offset);
+          interactive.renderer.render(interactive.scene, interactive.camera);
+          gameoverTimer = setTimeout(animateOver, 500);
+        }, 500);
       };
 
-      timer = setInterval(animateOver, 1000);
+      actor.activePosition = key + '1';
+      interactive.scene.remove(actor.ball);
+      $('#gameover').dataset.winner = winner;
+      $('#gameover').classList.add('show');
+
+      animateOver();
     }
-  };
+  });
 
   var renderVideo = window.renderVideo = function () {
+
+    // this whole readyState and event listener clean up is a
+    // bit of a mess, but it wasn't firing ready when it really
+    // was, and I need the videoHeight & width to do the projected
+    // rendering of the video on top of the canvas.
     if (video.readyState !== 4) {
       return;
     }
@@ -346,10 +394,15 @@ function generateSprite() {
     while (i--) {
       video.removeEventListener(events[i], echo, false);
     }
+    events = [];
+
+    if (novideo()) {
+      return;
+    }
 
     video.className = 'streaming';
 
-    var dims = playerDimensions.tilt[actor.activePosition] || playerDimensions.tilt.center;
+    var dims = playerDimensions.moving[actor.activePosition] || playerDimensions.moving.center;
     var player = actor.player;
 
     var y = player.position.y + ((playerDimensions.height * player.scale.y) / 2),
@@ -372,7 +425,7 @@ function generateSprite() {
     // serious no idea why I can't reuse .y & .height, it makes my brain hurt
     // but it turns out if you just mix around the values, then it just
     // *suddenly* works. ::sign::
-    
+
     coords.width++;
 
     parent.style.left = px(coords.x);
@@ -629,6 +682,8 @@ function initGame() {
   $.trigger('showPanel', 'playing');
   running = true;
 
+  actor.activePosition = 'center'; // default to centre
+
   if (initComplete) {
     return;
   }
@@ -693,6 +748,8 @@ function initGame() {
 
   $.on('remoteThrow', function (event) {
     if (game.turn === false) {
+      actor.activePosition = 'throw2';
+      $.trigger('repaintPlayer');
       resetBall(event.data.posX, event.data.x, event.data.y, event.data.speed);
     }
   });
