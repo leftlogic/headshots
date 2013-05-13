@@ -29,7 +29,10 @@ app.configure(function(){
   app.use(express.cookieParser('spa6kugo3chi4rti8wajy1no5ku'));
   app.use(express.session({ store: store, secret: 'spa6kugo3chi4rti8wajy1no5ku' }));
 
-  if (app.settings.env !== 'development') {
+  // note: I'd like to use node-http-proxy for live, but I'm using
+  // stunnel instead, and with stunnel I can't flag that the request
+  // has been proxied - so this doesn't work.
+  if (false && app.settings.env !== 'development') {
     app.use(function (req, res, next) {
       if (req.secure) {
         return next();
