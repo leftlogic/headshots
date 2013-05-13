@@ -86,6 +86,7 @@ function setupSocket() {
   $.on('pause', eventSender);
   $.on('resume', eventSender);
   $.on('endTurn', eventSender);
+  $.on('playagain', eventSender);
   $.on('throw', eventIfTurn);
   $.on('hit', eventIfTurn);
 

@@ -228,6 +228,7 @@ $.on('remotePause', pause);
 $.on('remoteResume', resume);
 $.on('hit', firstToWin);
 $.on('remoteHit', firstToWin);
+$.on('remotePlayagain', playagain);
 
 var panels = $('.panel');
 

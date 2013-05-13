@@ -1,6 +1,7 @@
 # TODO
 
 - If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
+- If you win, you should see your own face, not the other player's face
 - Game shouldn't start until connection is established
 - Information page
 - BUG: single tap on mobile does weird things
@@ -12,7 +13,6 @@
 - build.min.js causes errors
 - Sync up events (it should be fine if both on same wifi)
 - Exit game from any screen
-- If resize, video shouldn't reappear when game over etc.
 - BUG: /join/1234 doesn't work
 - Hide screen on landscape
 - x-browser testing/support
@@ -24,6 +24,7 @@
 
 # DONE
 
+[x] If resize, video shouldn't reappear when game over etc.
 [x] Play again / reset button
 [x] Game over page
 [x] Add game over winner head
