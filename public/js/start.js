@@ -37,6 +37,10 @@ function status(callback) {
         });
         towin = window.game.towin;
         play.init();
+
+        // this is done after play.init to ensure the event order is right
+        $.on('hit', firstToWin);
+        $.on('remoteHit', firstToWin);
       } else if (result.type === 'start') {
         setPin(result.data.pin);
         window.history.replaceState({}, title, '/start/' + pin);
@@ -198,7 +202,7 @@ function firstToWin() {
   }
 
   if (gameover) {
-    game.gameover = true; // locks the game up
+    window.game.gameover = true; // locks the game up
     $.trigger('gameover');
   }
 }
@@ -213,6 +217,9 @@ tap($('#joingame'), joingame);
 
 $.on('remotePause', pause);
 $.on('remoteResume', resume);
+$.on('disconnect', function () {
+  // init('start');
+});
 
 var panels = $('.panel');
 
@@ -220,7 +227,15 @@ $.on('showPanel', function (event) {
   showPanel(event.data);
 });
 
-$.on('hit', firstToWin).on('remoteHit', firstToWin);
+$.on('disconnect', function () {
+  xhr.get('/other-player-left', function (err) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    init('start');
+  });
+});
 
 connection.init();
 

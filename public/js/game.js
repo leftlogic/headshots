@@ -6,7 +6,8 @@ var play = (function () {
 var gameover = function () {};
 
 var running = false,
-    activeTurn = true;
+    activeTurn = true,
+    initComplete = false;
 
 var interactive = {
   camera: null,
@@ -626,6 +627,11 @@ function loop() {
 
 function initGame() {
   $.trigger('showPanel', 'playing');
+  running = true;
+
+  if (initComplete) {
+    return;
+  }
 
   window.addEventListener('resize', function () {
     var w = window.innerWidth,
@@ -715,7 +721,7 @@ function initGame() {
       $.trigger('showPanel', 'hit');
       setTimeout(function () {
         $.trigger('showPanel', 'playing');
-      }, 500);
+      }, 750);
     }
   });
 
@@ -731,7 +737,9 @@ function initGame() {
     }
     $.trigger('repaintPlayer');
     $('#turn').classList.add('showTurn');
-    if (game.turn) resetBall(utils.map(window.innerWidth / 2, 0, window.innerWidth, -100, 100));
+    if (game.turn) {
+      resetBall(utils.map(window.innerWidth / 2, 0, window.innerWidth, -100, 100));
+    }
   });
 
   $.on('theirScore', function () {
@@ -740,12 +748,9 @@ function initGame() {
 
   resetBall(utils.map(window.innerWidth / 2, 0, window.innerWidth, -100, 100));
 
-  // setupDebug();
-
-  // setInterval(loop, 1000 / 30);
-  running = true;
   redrawAll();
   loop();
+  initComplete = true;
 }
 
 return {

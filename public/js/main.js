@@ -138,10 +138,8 @@ function initConnection() {
     var video = document.getElementById('remote' + socketId);
     if (video) { video.parentNode.removeChild(video); }
     disconnectTimer = setTimeout(function () {
-      // TODO don't pause - show connection error
       $.trigger('disconnect');
-      $.trigger('pause');
-    }, 10 * 1000);
+    }, 5 * 1000);
   });
 
   setupSocket();

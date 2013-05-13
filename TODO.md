@@ -1,8 +1,10 @@
 # TODO
 
+- When hit, video appears over hit image
+- Hit too quick
+- Loser doesn't get game over event
 - Game over page
 - Game shouldn't start until connection is established
-- Scale the degree of throwing on the y axis
 - Information page
 - BUG: single tap on mobile does weird things
 - Update to use build.min.js
@@ -26,6 +28,7 @@
 
 # DONE
 
+[x] Scale the degree of throwing on the y axis
 [x] Page too tall with "Hit!" screen
 [x] Turn gets fucked
 [x] About 
