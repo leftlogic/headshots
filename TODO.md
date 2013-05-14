@@ -2,8 +2,6 @@
 
 - If player leaves game for long enough, when user (disconnects), show connection issue (after X time)
 - If you win, you should see your own face, not the other player's face
-- Game shouldn't start until connection is established
-- Information page
 - BUG: single tap on mobile does weird things
 - Error handling (if player leaves, if player tries to join without starting, connections dropped, hide on landscape orientation, etc)
 - use put varnish in front of game
@@ -24,6 +22,9 @@
 
 # DONE
 
+[x] Information page
+[x] "Play again" enough times and it's both player's turn
+[x] Game shouldn't start until connection is established
 [x] If resize, video shouldn't reappear when game over etc.
 [x] Play again / reset button
 [x] Game over page

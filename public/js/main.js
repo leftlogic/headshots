@@ -36,6 +36,7 @@ var dataChannel = {
 };
 
 function setupSocket() {
+  $.trigger('connecting');
   var socket;
 
   if(rtc.dataChannelSupport) {
@@ -131,8 +132,10 @@ function initConnection() {
   rtc.on('add remote stream', function(stream, socketId) {
     clearTimeout(disconnectTimer);
     console.log('adding remote stream');
-    $.trigger('readyremote');
     rtc.attachStream(stream, 'remote');
+    rtc.dataChannels[socketId].onopen = function () {
+      $.trigger('readyremote');
+    };
   });
   rtc.on('disconnect stream', function(socketId) {
     console.log('remove stream ' + socketId);
@@ -144,6 +147,13 @@ function initConnection() {
   });
 
   setupSocket();
+  setTimeout(function () {
+    $('#waiting .delay.one').hidden = false;
+  }, 10 * 1000);
+
+  setTimeout(function () {
+    $('#waiting .delay.two').hidden = false;
+  }, 30 * 1000);
 }
 
 rtc.on('connect', connectVideo);
@@ -165,15 +175,40 @@ var state = {
   readyremote: false,
   readylocal: false
 };
+
+function dataChannelOpen() {
+  if (PeerConnection) {
+    for (var id in rtc.dataChannels) {
+      if (rtc.dataChannels[id].readyState === 'open') {
+        return true; // otherwise fall through to final return
+      }
+    }
+  } else {
+    return rtc._socket.readyState === 1;
+  }
+
+  return false;
+}
+
+function isReady() {
+  if (dataChannelOpen()) {
+    $.trigger('ready');
+  } else {
+    // channels should be open - show reload issue button
+    $('#waiting .delay.two').hidden = false;
+    setTimeout(isReady, 500);
+  }
+}
+
 $.on('readyremote', function () {
   state.readyremote = true;
   if (state.readylocal) {
-    $.trigger('ready');
+    isReady();
   }
 }).on('readylocal', function () {
   state.readylocal = true;
   if (state.readyremote) {
-    $.trigger('ready');
+    isReady();
   }
 });
 

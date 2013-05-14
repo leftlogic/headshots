@@ -28,7 +28,7 @@ canvas {
   display: block;
 }
 
-html, body, input {
+html, body, input, h1 {
   font-family: 'Roboto', times;
   font-weight: 300;
   font-size: 16px;
@@ -396,7 +396,7 @@ input[type=submit] {
 .panel {
   background: rgba(44, 62, 80, 0.7);
   height: 100%;
-  top: -100%;
+  top: -110%;
   -webkit-transition: -webkit-transform 150ms;
   -moz-transition: -moz-transform 150ms;
   transition: transform 150ms;
@@ -406,9 +406,9 @@ input[type=submit] {
 }
 
 .panel.show {
-  -webkit-transform: translateY(100%);
-  -moz-transform: translateY(100%);
-  transform: translateY(100%);
+  -webkit-transform: translateY(110%);
+  -moz-transform: translateY(110%);
+  transform: translateY(110%);
 }
 
 #pin {
@@ -591,9 +591,9 @@ video.streaming {
 }
 
 #hit.panel.show {
-  -webkit-transform: translateY(100%);
-  -moz-transform: translateY(100%);
-  transform: translateY(100%);
+  -webkit-transform: translateY(110%);
+  -moz-transform: translateY(110%);
+  transform: translateY(110%);
   height: 100%;
 }
 
@@ -674,4 +674,28 @@ video.streaming {
 
 .copy h2 {
   font-weight: 300;
+}
+
+#waiting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 110%;
+  z-index: 9;
+  background: rgba(0,0,0,0.7);
+}
+
+#waiting h1 {
+  text-align: center;
+  font-weight: 100;
+  font-size: 3rem;
+}
+
+#waiting .delay {
+  font-size: 1.5rem;
+  font-weight: 100;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  text-align: center;
 }

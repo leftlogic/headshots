@@ -3,11 +3,13 @@
 "use strict";
 
 var turnEl = $('#turn');
+var waiting = $('#waiting, #waiting .delay');
 var removeTurnClass = function() {
   this.classList.remove('showTurn');
 };
 
 var towin = null;
+var ready = false;
 
 turnEl.on('webkitAnimationEnd', removeTurnClass);
 turnEl.on('animationend', removeTurnClass);
@@ -37,6 +39,9 @@ function status(callback) {
         });
         towin = window.game.towin;
         play.init();
+        if (!ready) {
+          waiting[0].hidden = false;
+        }
 
         // this is done after play.init to ensure the event order is right
       } else if (result.type === 'start') {
@@ -129,6 +134,8 @@ function getState() {
   // path rules, then hash
   if (l.pathname.indexOf('/play') === 0 && l.hash) {
     path = (l.hash.match(/^#(.*?)\/*(\d+)*\/*$/) || [undefined,undefined,undefined]);
+  } else if (l.pathname.indexOf('/play') === 0 && !pin) {
+    window.location = '/start';
   } else {
     path = (l.pathname.match(/^\/(.*?)\/*(\d+)*\/*$/) || [undefined,undefined,undefined]);
   }
@@ -209,7 +216,7 @@ function playagain() {
   xhr.get('/playagain', function (err, result) {
     if (result) {
       status(function () {
-        $.trigger('playagain');
+        $.trigger('restart');
       });
     }
   });
@@ -222,13 +229,26 @@ tap($('#pause'), pause);
 tap($('#resume'), resume);
 tap($('#exit'), exit);
 tap($('#joingame'), joingame);
-tap($('#again'), playagain);
+tap($('#again'), function () {
+  $.trigger('playagain');
+  playagain();
+});
+
+tap($('#reload'), function () {
+  window.location.reload();
+});
 
 $.on('remotePause', pause);
 $.on('remoteResume', resume);
 $.on('hit', firstToWin);
 $.on('remoteHit', firstToWin);
 $.on('remotePlayagain', playagain);
+$.on('ready', function () {
+  ready = true;
+  waiting.forEach(function (el) {
+    el.hidden = true;
+  });
+});
 
 var panels = $('.panel');
 

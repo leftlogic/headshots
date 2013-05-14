@@ -341,7 +341,7 @@ function generateSprite() {
 
   var gameoverTimer = null;
 
-  $.on('playagain', function () {
+  $.on('restart', function () {
     $('#gameover').classList.remove('show');
     clearTimeout(gameoverTimer);
     actor.activePosition = game.turn ? 'center' : 'throw1';
