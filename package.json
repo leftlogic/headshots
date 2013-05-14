@@ -1,7 +1,7 @@
 {
   "name": "headshots",
   "description": "Throw the ball at your opponent's face!",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "node": ">= 0.10.x"
   },
