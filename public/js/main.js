@@ -115,7 +115,7 @@ function connectVideo() {
         {maxWidth: 320},
         {maxHeight: 180}
       ]},
-      'audio': false
+      'audio': true
     }, function(stream) {
       console.log('local video streaming');
       $.trigger('readylocal');
