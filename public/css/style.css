@@ -1,10 +1,18 @@
+@font-face {
+  font-family: 'icons';
+  src: url(data:application/x-font-woff;charset=utf-8;base64,d09GRk9UVE8AAAP0AAsAAAAABZwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAABCAAAANQAAADr/cO1skZGVE0AAAHcAAAAGgAAABxnxOJ6R0RFRgAAAfgAAAAdAAAAIAAxAARPUy8yAAACGAAAAEsAAABgL9zcQGNtYXAAAAJkAAAAPQAAAVLgFfLMaGVhZAAAAqQAAAAuAAAANvymgGdoaGVhAAAC1AAAAB4AAAAkBBD/5WhtdHgAAAL0AAAAEAAAABAGAAAAbWF4cAAAAwQAAAAGAAAABgAEUABuYW1lAAADDAAAANwAAAFuDTaJ03Bvc3QAAAPoAAAADAAAACAAAwAAeJw9jTGKwkAYhd8fJyrJoMY1ouygsTVNrAPb7V5AO0vTyIIWZi9go/K3OYqVHiVH8AAZyIJOFKze++DxPoIQIKL6erXd7EAWCF96ZOlxTQ8EyxpLMXIwnHfvzO8iG/yrM53aCvu2AjoKJ09BKly6sKuPJtro4xPB32b9HUXRK2Ymfgw9ZS8jQAc60gmCyPKCaav69QOnPJc9f+K0irRYGCzOelEh61T8ZzprmF2PfZaO0X7AIuoEZcJ5HIbX5e2Wx7a7vIZhnHOZFAnHue0+AMLgQ/l4nGNgYGBkAIIztovOg+izh+dfhdEAVQ8IhAAAeJxjYGRgYOADYgkGEGBiYARCZiBmAfMYAARrADYAAAB4nGNgZmJgnMDAysDB6MOYxsDA4A6lvzJIMrQwMDAxsDIzwIEAgskQkOaawuDwgOEDA+OD/w8Y9BgfMCg0MDAwwhUoACEjABBCDB8AeJxjYGBgZoBgGQZGBhDwAfIYwXwWBgMgzQGETCCJB4wfGP7/B7MYICwFRgFmqC4wYGRjQOaOSAAAy5IIsAAAAHicY2BkYGAAYjfutezx/DZfGbiZGEDg7OH5VxH0/wdMDIwPgFwOBrA0ACuQC4gAAHicY2BkYGB88P8Bgx4TAwPDPwYgCRRBASwAbegD9wAAAgAAAAIAAAACAAAAAAAAAAAAUAAABAAAeJxtjj1qw0AQhT/ZkkN+SJEi9calQUJa48alCx0ghXtjFiEwWljb90iVKlWOkQPkADlRntYLKZyFYb43vJm3wAPvZIwvo5C68IQb5omnvDAkzuX5SFxwz1fimdSPnFl+q8ld3Bp5wiNPiadsWCTO5XlLXPDMZ+KZ5t/07PHKPEK/94PaK46OMwd2BEnXnQ87QRt9p9iDHA6DpaJWX6v+Ll20ZUnJSmXlaaRo/XBqfeicsVVt1iYmqttluSpt3chy/Z+tkoJ0H+dGl8ZMti4cez+Ypqr/2foFnWQydXicY2BmwAsAAH0ABA==) format('woff'),
+     url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAANAIAAAwBQRkZUTWfE4noAAAWcAAAAHEdERUYAMwAGAAAFfAAAACBPUy8yL7rcHwAAAVgAAABWY21hcOAX89MAAAHIAAABUmdhc3D//wADAAAFdAAAAAhnbHlmIG1jKgAAAywAAACQaGVhZPymgGcAAADcAAAANmhoZWEEEP/nAAABFAAAACRobXR4BqoAAAAAAbAAAAAYbG9jYQBmADoAAAMcAAAADm1heHAASgARAAABOAAAACBuYW1lDTaJ0wAAA7wAAAFucG9zdN3b5/QAAAUsAAAARgABAAAAAQAAmfNjdl8PPPUACwIAAAAAAM3Dn9UAAAAAzcOf1QAA/+ACAAHgAAAACAACAAAAAAAAAAEAAAHg/+AALgIAAAD+AAIAAAEAAAAAAAAAAAAAAAAAAAAGAAEAAAAGAA4AAgAAAAAAAgAAAAEAAQAAAEAAAAAAAAAAAQIAAZAABQAIAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAIABQMAAAAAAAAAAAAAEAAAAAAAAAAAAAAAUGZFZABA4ADwAAHg/+AALgHgACCAAAABAAAAAAAAAgAAAAAAAAAAqgAAAgAAAAIAAAAAAAAAAAAAAwAAAAMAAAAcAAEAAAAAAEwAAwABAAAAHAAEADAAAAAIAAgAAgAAAADgAfAA//8AAAAA4ADwAP//AAAgAxAFAAEAAAAAAAAAAAAAAQYAAAEAAAAAAAAAAQIAAAACAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AOgBIAAAAAgAA/+ACAAHgAAYADQAAARUnByc3JwMHFyM1FzcCAFBgMGBQUGBQ0FBgAeDQUGAwYFD+sGBQ0FBgAAAAAgAA/+ACAAHgAAYADQAANxUnByc3JyUHFyM1FzfgUGAwYFAB8GBQ0FBgwNBQYDBgUPBgUNBQYAABAAD/4AIAAeAAAgAAEQEhAgD+AAHg/gAAAAAAAAAMAJYAAQAAAAAAAQAFAAwAAQAAAAAAAgAHACIAAQAAAAAAAwAhAG4AAQAAAAAABAAFAJwAAQAAAAAABQALALoAAQAAAAAABgAFANIAAwABBAkAAQAKAAAAAwABBAkAAgAOABIAAwABBAkAAwBCACoAAwABBAkABAAKAJAAAwABBAkABQAWAKIAAwABBAkABgAKAMYAaQBjAG8AbgBzAABpY29ucwAAUgBlAGcAdQBsAGEAcgAAUmVndWxhcgAARgBvAG4AdABGAG8AcgBnAGUAIAAyAC4AMAAgADoAIABpAGMAbwBuAHMAIAA6ACAAMgAzAC0ANQAtADIAMAAxADMAAEZvbnRGb3JnZSAyLjAgOiBpY29ucyA6IDIzLTUtMjAxMwAAaQBjAG8AbgBzAABpY29ucwAAVgBlAHIAcwBpAG8AbgAgADEALgAwAABWZXJzaW9uIDEuMAAAaQBjAG8AbgBzAABpY29ucwAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAABAAIBAgEDAQQHdW5pRTAwMAd1bmlFMDAxB3VuaUYwMDAAAAAAAAH//wACAAEAAAAOAAAAGAAAAAAAAgABAAMABQABAAQAAAACAAAAAAABAAAAAMw9os8AAAAAzcOf1QAAAADNw5/V) format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 #pause, #hit, #turn { -webkit-font-smoothing: antialiased; }
 
 .scene, #game-control {
   -webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
   -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
 /* make transparent link selection, adjust last value opacity 0 to 1.0 */
-  -webkit-tap-highlight-color: rgba(0,0,0,1.0); 
+  -webkit-tap-highlight-color: rgba(0,0,0,1.0);
   -webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
 }
 
@@ -51,6 +59,8 @@ html {
 }
 
 #welcome {
+  max-width: 400px;
+  margin: 0 auto;
   background: #2C3E50 url(../images/logo.png) no-repeat center top;
   background-size: 80%;
 }
@@ -112,7 +122,7 @@ footer a {
   font-weight: 100;
   text-decoration: none;
   padding: 1rem;
-  position: absolute; 
+  position: absolute;
   bottom: 0;
   left: 0;
 }
@@ -370,9 +380,9 @@ input[type=submit] {
 }
 
 #pause {
-  padding: 10px 10px 20px 20px;
+  padding: 13px 10px 20px 13px;
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   width: 32px;
   height: 32px;
@@ -545,10 +555,12 @@ video.streaming {
   -ms-flex-flow: column wrap;
   flex-flow: column wrap;
   height: 100%;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /*#gameover.announce {
-  
+
 }
 */
 #hit {
@@ -630,10 +642,10 @@ video.streaming {
   height: 100%;
 }
 
-#gameover.show { 
-  -webkit-transform: translateY(0%); 
-  -moz-transform: translateY(0%); 
-  transform: translateY(0%); 
+#gameover.show {
+  -webkit-transform: translateY(0%);
+  -moz-transform: translateY(0%);
+  transform: translateY(0%);
 }
 
 #gameover[data-winner="true"] h1:before {
@@ -698,4 +710,81 @@ video.streaming {
   padding-left: 2rem;
   padding-right: 2rem;
   text-align: center;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+  font-family: 'icons';
+  content: attr(data-icon);
+  speak: none;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.expand, .contract {
+  font-family: 'icons';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+.expand:before {
+  content: "\e000";
+}
+.contract:before {
+  content: "\e001";
+}
+
+#fullscreen {
+  display:block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+#fullscreen span {
+  color: #4D6883;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 20px;
+  display: block;
+}
+
+:-webkit-full-screen #fullscreen .expand {
+  display:none;
+}
+
+body:-webkit-full-screen {
+  width: 100%;
+  max-width: 100%;
+}
+
+:-moz-full-screen #fullscreen .expand {
+  display:none;
+}
+
+body:-moz-full-screen {
+  width: 100%;
+  max-width: 100%;
+}
+
+#fullscreen .contract {
+  display:none;
+}
+
+:-webkit-full-screen #fullscreen .contract {
+  display:block;
+}
+
+:-moz-full-screen #fullscreen .contract {
+  display:block;
 }

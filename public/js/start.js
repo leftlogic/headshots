@@ -222,6 +222,26 @@ function playagain() {
   });
 }
 
+// Find the right method, call on correct element
+function cancelFullscreen() {
+  if(document.cancelFullScreen) {
+    document.cancelFullScreen();
+  } else if(document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if(document.webkitCancelFullScreen) {
+    document.webkitCancelFullScreen();
+  }
+}
+
+function launchFullScreen(element) {
+  if(element.requestFullScreen) {
+    element.requestFullScreen();
+  } else if(element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if(element.webkitRequestFullScreen) {
+    element.webkitRequestFullScreen();
+  }
+}
 
 var control = $('#game-control');
 
@@ -236,6 +256,14 @@ tap($('#again'), function () {
 
 tap($('#reload'), function () {
   window.location.reload();
+});
+
+tap($('#fullscreen'), function (e) {
+  if (e.target.classList.contains('expand')) {
+    launchFullScreen(document.body);
+  } else {
+    cancelFullScreen();
+  }
 });
 
 $.on('remotePause', pause);
