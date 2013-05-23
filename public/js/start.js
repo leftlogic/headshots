@@ -262,7 +262,7 @@ tap($('#fullscreen'), function (e) {
   if (e.target.classList.contains('expand')) {
     launchFullScreen(document.body);
   } else {
-    cancelFullScreen();
+    cancelFullscreen();
   }
 });
 
