@@ -249,7 +249,8 @@ tap($('#pause'), pause);
 tap($('#resume'), resume);
 tap($('#exit'), exit);
 tap($('#joingame'), joingame);
-tap($('#again'), function () {
+tap($('#again'), function (e) {
+  e.preventDefault();
   $.trigger('playagain');
   playagain();
 });
@@ -259,6 +260,7 @@ tap($('#reload'), function () {
 });
 
 tap($('#fullscreen'), function (e) {
+  e.preventDefault();
   if (e.target.classList.contains('expand')) {
     launchFullScreen(document.body);
   } else {
