@@ -34,7 +34,7 @@ function request(type, url, opts, callback) {
     } catch (e) {
       err = e;
     }
-    callback.call(xhr, e, result);
+    callback.call(xhr, err, result);
   };
 
   xhr.onerror = function () {
