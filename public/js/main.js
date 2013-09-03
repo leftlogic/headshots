@@ -169,7 +169,7 @@ $.on('pinchange', function () {
   rtc.connect((proto.indexOf('https') !== -1 ? 'wss:' : 'ws:') + href.substring(proto.length).split('#')[0], pin);
 });
 
-// should/could be done with bitwise state checking, 
+// should/could be done with bitwise state checking,
 // but it's late :(
 var state = {
   readyremote: false,
@@ -213,7 +213,9 @@ $.on('readyremote', function () {
 });
 
 return {
-  init: initConnection
+  init: initConnection,
+  state: state,
+  dataChannelOpen: dataChannelOpen
 };
 
 })();
